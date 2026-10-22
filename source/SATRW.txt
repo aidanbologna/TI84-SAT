@@ -11,8 +11,8 @@ Menu("SAT READ+WRITE","R&W GUIDE",A0,"GRAMMAR QUIZ",A1,"TEST STRATEGY",A2,"HOW T
 Lbl A1
 Menu("GRAMMAR QUIZ","START QUIZ",A6,"MAIN MENU",A5)
 Lbl A0
-Menu("READING+WRITING","PUNCTUATION",BC,"GRAMMAR",BD,"TRANSITIONS",BE,"NOTES QS",BF,"READING QS",BG,"R&W STRATEGY",BH,"MAIN MENU",A5)
-Lbl BC
+Menu("READING+WRITING","PUNCTUATION",BA,"GRAMMAR",BB,"TRANSITIONS",BC,"NOTES QS",BD,"READING QS",BE,"R&W STRATEGY",BF,"MAIN MENU",A5)
+Lbl BA
 1→P
 Repeat K=45 or P>7
 ClrHome
@@ -89,7 +89,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A0
-Lbl BD
+Lbl BB
 1→P
 Repeat K=45 or P>8
 ClrHome
@@ -174,7 +174,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A0
-Lbl BE
+Lbl BC
 1→P
 Repeat K=45 or P>6
 ClrHome
@@ -242,7 +242,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A0
-Lbl BF
+Lbl BD
 1→P
 Repeat K=45 or P>3
 ClrHome
@@ -283,7 +283,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A0
-Lbl BG
+Lbl BE
 1→P
 Repeat K=45 or P>6
 ClrHome
@@ -350,7 +350,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A0
-Lbl BH
+Lbl BF
 1→P
 Repeat K=45 or P>3
 ClrHome
@@ -472,7 +472,7 @@ Lbl A6
 0→L
 0→T
 0→P
-Lbl BL
+Lbl BJ
 Repeat Q≠P
 randInt(1,18)→Q
 End
@@ -681,7 +681,7 @@ Repeat max(K={92,93,94,82,45})
 getKey→K
 End
 If K=45
-Goto BK
+Goto BI
 (K=92)+2(K=93)+3(K=94)+4(K=82)→G
 T+1→T
 ClrHome
@@ -818,9 +818,9 @@ Repeat K=45 or K=105
 getKey→K
 End
 If K=105
-Goto BL
-Goto BK
-Lbl BK
+Goto BJ
+Goto BI
+Lbl BI
 ClrHome
 Output(2,1,"FINAL SCORE")
 Output(4,1,L)

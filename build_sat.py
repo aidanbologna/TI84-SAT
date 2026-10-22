@@ -21,13 +21,14 @@ from pathlib import Path
 HERE = Path(__file__).parent
 
 # Build targets. SAT is the full program for the TI-84 Plus CE (lots of RAM).
-# SATMATH + SATRW split the content for the older TI-84 Plus / Silver Edition,
-# which only has ~24 KB of RAM, and use uppercase text (half the bytes).
+# SATMATH + SATTRIG + SATRW split the content for the older TI-84 Plus / Silver
+# Edition, which only has ~24 KB of RAM, and use uppercase text (half the bytes).
 TARGETS = {
-    "SAT": dict(upper=False, sections={"core", "solvers", "formulas", "rw", "strategy",
+    "SAT": dict(upper=False, sections={"core", "solvers", "trig", "formulas", "rw", "strategy",
                                        "quizmath", "quizgrammar", "quizfinal"}),
     "SATMATH": dict(upper=True, sections={"core", "solvers", "formulas", "strategy",
                                           "quizmath", "quizfinal"}),
+    "SATTRIG": dict(upper=True, sections={"core", "trig", "quizfinal"}),
     "SATRW": dict(upper=True, sections={"core", "rw", "strategy", "quizgrammar", "quizfinal"}),
 }
 PROG_NAME = sys.argv[1] if len(sys.argv) > 1 else "SAT"
@@ -189,10 +190,110 @@ def seg_row(row: int, segs: list) -> None:
             code.extend(body)
 
 
+# ---------------------------------------------------------------------
+# Exact-value printer. TI-BASIC has no subroutines, so each call stores its
+# arguments, jumps to the shared routine, and the routine jumps back through
+# a dispatch table on Z. Calls must sit at the top level (never inside a block).
+#   in:  X value, R row, θ start column, Z return id
+#   out: prints X as  [-]p√(q)/d  (or a plain fraction / integer), θ advances
+#   uses: I J K O Q U W Y as scratch
+# Works for any value whose square is a fraction with denominator <= 999,
+# which covers every SAT triangle and unit-circle value. Otherwise: decimal.
+# ---------------------------------------------------------------------
+_exact_returns: list[str] = []
+
+
+def exact(expr: str, row: int, col) -> None:
+    rid = len(_exact_returns) + 1
+    ret = f"XR{rid}"
+    _exact_returns.append(ret)
+    T(f"""
+{expr}→X
+{row}→R
+{col}→θ
+{rid}→Z
+Goto @XA
+Lbl @{ret}
+""")
+
+
+def exact_routine() -> list[str]:
+    """Emitted at the very top of the program so Goto finds it quickly."""
+    global code
+    saved, code = code, []
+    T("""
+Goto @ST0
+Lbl @XA
+If abs(X)<.000000001
+Goto @XZ
+round(X²,9)→Y
+Y→Q
+0→I
+1→J
+1→U
+0→O
+Repeat abs(J/O-Y)<.000000002max(1,Y) or O>999
+int(Q)→W
+WJ+I→K
+J→I
+K→J
+WO+U→K
+O→U
+K→O
+If Q-W:1/(Q-W)→Q
+End
+If O>999 or JO>99999
+Goto @XD
+JO→K
+int(√(K))→I
+While fPart(K/I²)
+I-1→I
+End
+K/I²→U
+gcd(I,O)→W
+I/W→I
+O/W→O
+(X<0)+(U=1 or I≠1)W(I)+(U≠1)(3+W(U))+(O≠1)(1+W(O))→K
+If θ+K>17
+Goto @XD
+If X<0:Then:Output(R,θ,"-"):θ+1→θ:End
+If U=1 or I≠1:Then:Output(R,θ,I):θ+W(I)→θ:End
+If U≠1:Then:Output(R,θ,"√("):Output(R,θ+2,U):θ+3+W(U)→θ:Output(R,θ-1,")"):End
+If O≠1:Then:Output(R,θ,"/"):Output(R,θ+1,O):θ+1+W(O)→θ:End
+Goto @XR
+Lbl @XD
+Output(R,θ,round(X,6))
+Goto @XR
+Lbl @XZ
+Output(R,θ,"0")
+θ+1→θ
+Lbl @XR
+""")
+    for i, ret in enumerate(_exact_returns, 1):
+        T(f"If Z={i}")
+        T(f"Goto @{ret}")
+    T("Lbl @ST0")
+    out, code = code, saved
+    return ["#SECTION trig"] + out
+
+
+def triple() -> None:
+    """Random scaled Pythagorean triple: legs A, B (randomly swapped), hyp C."""
+    T("""
+randInt(1,4)→N
+randInt(1,3)→H
+H(3(N=1)+5(N=2)+8(N=3)+7(N=4))→A
+H(4(N=1)+12(N=2)+15(N=3)+24(N=4))→B
+H(5(N=1)+13(N=2)+17(N=3)+25(N=4))→C
+If randInt(0,1):Then:A→H:B→A:H→B:End
+""")
+
+
 # =====================================================================
 # SPLASH + MAIN MENU (differs per target)
 # =====================================================================
-SPLASH = {"SAT": "|  Math + R&W  |", "SATMATH": "|  Math        |", "SATRW": "|  Read+Write  |"}
+SPLASH = {"SAT": "|  Math + R&W  |", "SATMATH": "|  Math        |", "SATTRIG": "|  Trig Center |",
+          "SATRW": "|  Read+Write  |"}
 section("core")
 T(f"""
 ClrHome
@@ -208,16 +309,22 @@ Pause
 if PROG_NAME == "SAT":
     menu("MM", "SAT TOOLKIT", [
         ("Math Solvers", "MS"),
+        ("Trig Center", "TC"),
         ("Math Formulas", "FA"),
         ("R&W Guide", "RW"),
         ("Practice Quiz", "PQ"),
-        ("Test Strategy", "TS"),
-        ("How To Use", "HU"),
+        ("Strategy/Help", "SH"),
         ("Quit", "QT"),
     ])
     menu("PQ", "PRACTICE QUIZ", [
         ("Math (random)", "QM"),
+        ("Trig", "TQ"),
         ("Grammar", "QG"),
+        ("Main Menu", "MM"),
+    ])
+    menu("SH", "STRATEGY + HELP", [
+        ("Test Strategy", "TS"),
+        ("How To Use", "HU"),
         ("Main Menu", "MM"),
     ])
 elif PROG_NAME == "SATMATH":
@@ -232,6 +339,19 @@ elif PROG_NAME == "SATMATH":
     menu("PQ", "PRACTICE QUIZ", [
         ("Math (random)", "QM"),
         ("Main Menu", "MM"),
+    ])
+elif PROG_NAME == "SATTRIG":
+    # the trig center is the main menu; TC and PQ are aliases so shared code can jump back
+    T("Lbl @MM")
+    T("Lbl @PQ")
+    menu("TC", "SAT TRIG CENTER", [
+        ("Right triangle", "T1"),
+        ("Special tri", "T2"),
+        ("Unit circle", "T3"),
+        ("Trig tools", "T4"),
+        ("Learn trig", "T5"),
+        ("Trig quiz", "TQ"),
+        ("Quit", "QT"),
     ])
 else:
     menu("MM", "SAT READ+WRITE", [
@@ -575,7 +695,7 @@ Goto @PC
 # ---------- Geometry / stats ----------
 menu("GM", "GEOMETRY/STATS", [
     ("Circle eqn", "CI"),
-    ("Right triangle", "RT"),
+] + ([("Right triangle", "T1")] if "trig" in CFG["sections"] else []) + [
     ("Arc & sector", "AR"),
     ("Mean/Median/SD", "ST"),
     ("Missing value", "MV"),
@@ -610,48 +730,6 @@ T("""
 Else
 Disp "NOT A CIRCLE"
 End
-Pause
-Goto @GM
-""")
-
-T("""
-Lbl @RT
-ClrHome
-Disp "RIGHT TRIANGLE","legs a,b; hyp c","0 = unknown"
-Input "a=",A
-Input "b=",B
-Input "c=",C
-abs(A)→A
-abs(B)→B
-abs(C)→C
-If not(C):√(A²+B²)→C
-If not(A) and C>B:√(C²-B²)→A
-If not(B) and C>A:√(C²-A²)→B
-ClrHome
-If A≤0 or B≤0 or C≤max(A,B)
-Goto @RX
-45/tan⁻¹(1)→F
-Disp "SIDES a, b, c"
-Disp round(A,4)
-Disp round(B,4)
-Disp round(C,4)
-Disp "ANGLE A (opp a)"
-Disp round(Ftan⁻¹(A/B),4)
-Disp "ANGLE B"
-Disp round(90-Ftan⁻¹(A/B),4)
-Pause
-ClrHome
-Disp "sin A = a/c"
-Disp A/C►Frac
-Disp "cos A = b/c"
-Disp B/C►Frac
-Disp "tan A = a/b"
-Disp A/B►Frac
-Disp "TIP: sinA=cosB"
-Pause
-Goto @GM
-Lbl @RX
-Disp "NEED 2 VALID","SIDES (c = hyp)"
 Pause
 Goto @GM
 """)
@@ -1671,6 +1749,902 @@ Goto @PQ
 """)
 
 # =====================================================================
+# TRIG CENTER
+# Variables: callers use A-H, M, N, P, S, V (+ T/L in the quiz). The exact()
+# routine owns I J K O Q U W Y X R Z θ, so nothing here keeps a value in
+# those across an exact() call.
+# =====================================================================
+section("trig")
+if PROG_NAME != "SATTRIG":
+    menu("TC", "TRIG CENTER", [
+        ("Right triangle", "T1"),
+        ("Special tri", "T2"),
+        ("Unit circle", "T3"),
+        ("Trig tools", "T4"),
+        ("Learn trig", "T5"),
+        ("Trig quiz", "TQ"),
+        ("Main Menu", "MM"),
+    ])
+
+# ---------- Right triangle: any 2 sides, or 1 side + 1 angle ----------
+T("""
+Lbl @T1
+ClrHome
+Disp "RIGHT TRIANGLE","legs a,b hyp c","0 = unknown"
+Input "a=",A
+Input "b=",B
+Input "c=",C
+Input "angle A°=",D
+abs(A)→A
+abs(B)→B
+abs(C)→C
+If D≤0 or D≥90:0→D
+If D
+Then
+If A
+Then
+A/tan(D°)→B
+A/sin(D°)→C
+Else
+If B
+Then
+Btan(D°)→A
+B/cos(D°)→C
+Else
+Csin(D°)→A
+Ccos(D°)→B
+End
+End
+Else
+If not(C):√(A²+B²)→C
+If not(A) and C>B:√(C²-B²)→A
+If not(B) and C>A:√(C²-A²)→B
+End
+ClrHome
+If A≤0 or B≤0 or C≤max(A,B)
+Goto @T1X
+45/tan⁻¹(1)→F
+Ftan⁻¹(A/B)→E
+Output(1,1,"a=")
+""")
+exact("A", 1, 3)
+T('Output(2,1,"b=")')
+exact("B", 2, 3)
+T('Output(3,1,"c=")')
+exact("C", 3, 3)
+T("""
+Output(4,1,"angle A=")
+Output(4,9,round(E,4))
+Output(5,1,"angle B=")
+Output(5,9,round(90-E,4))
+Output(6,1,"area=")
+""")
+exact("AB/2", 6, 6)
+T("""
+Output(7,1,"perim=")
+Output(7,7,round(A+B+C,4))
+Output(8,1,"ENTER: trig")
+Pause
+ClrHome
+Output(1,1,"TRIG RATIOS")
+Output(2,1,"sin A=")
+""")
+exact("A/C", 2, 7)
+T('Output(3,1,"cos A=")')
+exact("B/C", 3, 7)
+T('Output(4,1,"tan A=")')
+exact("A/B", 4, 7)
+T('Output(5,1,"sin B=")')
+exact("B/C", 5, 7)
+T('Output(6,1,"cos B=")')
+exact("A/C", 6, 7)
+T('Output(7,1,"tan B=")')
+exact("B/A", 7, 7)
+T("""
+Output(8,1,"ENTER: notes")
+Pause
+ClrHome
+Output(1,1,"NOTES")
+Output(2,1,"sinA = cosB")
+Output(3,1," since A+B=90°")
+Output(4,1,"sin²A+cos²A=1")
+If abs(E-45)<.0001:Output(6,1,"45-45-90 tri!")
+If abs(E-30)<.0001 or abs(E-60)<.0001:Output(6,1,"30-60-90 tri!")
+If not(fPart(round(A,6))+fPart(round(B,6))+fPart(round(C,6))):Output(7,1,"Pythag. triple!")
+Pause
+Goto @TC
+Lbl @T1X
+Disp "NEED 2 SIDES, OR","1 SIDE + ANGLE A"
+Pause
+Goto @TC
+""")
+
+# ---------- Special right triangles ----------
+menu("T2", "SPECIAL RIGHT", [
+    ("30-60-90", "S1"),
+    ("45-45-90", "S2"),
+    ("Back", "TC"),
+])
+menu("S1", "30-60-90 KNOWN:", [
+    ("Short leg  x", "S3"),
+    ("Long leg x√(3)", "S4"),
+    ("Hypotenuse 2x", "S5"),
+    ("Back", "T2"),
+])
+T("""
+Lbl @S3
+1→N
+Goto @S6
+Lbl @S4
+2→N
+Goto @S6
+Lbl @S5
+3→N
+Lbl @S6
+ClrHome
+Disp "30-60-90","(4√(3) is ok)"
+Input "length=",V
+abs(V)→P
+If N=2:P/√(3)→P
+If N=3:P/2→P
+ClrHome
+Output(1,1,"30-60-90")
+Output(2,1,"short=")
+""")
+exact("P", 2, 7)
+T('Output(3,1,"long =")')
+exact("P√(3)", 3, 7)
+T('Output(4,1,"hyp  =")')
+exact("2P", 4, 7)
+T('Output(5,1,"area =")')
+exact("P²√(3)/2", 5, 7)
+T("""
+Output(6,1,"perim=")
+Output(6,7,round(P(3+√(3)),4))
+Output(7,1,"short is opp 30°")
+Output(8,1,"long is opp 60°")
+Pause
+Goto @S1
+""")
+menu("S2", "45-45-90 KNOWN:", [
+    ("Leg  x", "S7"),
+    ("Hyp  x√(2)", "S8"),
+    ("Back", "T2"),
+])
+T("""
+Lbl @S7
+1→N
+Goto @S9
+Lbl @S8
+2→N
+Lbl @S9
+ClrHome
+Disp "45-45-90","(4√(2) is ok)"
+Input "length=",V
+abs(V)→P
+If N=2:P/√(2)→P
+ClrHome
+Output(1,1,"45-45-90")
+Output(2,1,"legs =")
+""")
+exact("P", 2, 7)
+T('Output(3,1,"hyp  =")')
+exact("P√(2)", 3, 7)
+T('Output(4,1,"area =")')
+exact("P²/2", 4, 7)
+T("""
+Output(5,1,"perim=")
+Output(5,7,round(P(2+√(2)),4))
+Output(7,1,"isosceles right")
+Output(8,1,"triangle")
+Pause
+Goto @S2
+""")
+
+# ---------- Unit circle explorer ----------
+menu("T3", "UNIT CIRCLE", [
+    ("Angle in deg", "U1"),
+    ("Angle in rad", "U2"),
+    ("Values table", "TL3"),
+    ("Back", "TC"),
+])
+T("""
+Lbl @U1
+ClrHome
+Disp "UNIT CIRCLE"
+Input "angle°=",D
+Goto @U3
+Lbl @U2
+ClrHome
+Disp "UNIT CIRCLE","(π key is ok)"
+Input "angle rad=",V
+180V/π→D
+Lbl @U3
+round(D-360int(D/360),9)→E
+If E≥360:E-360→E
+round(sin(E°),9)→S
+round(cos(E°),9)→C
+E→G
+If E>90 and E≤180:180-E→G
+If E>180 and E≤270:E-180→G
+If E>270:360-E→G
+ClrHome
+Output(1,1,"angle=")
+Output(1,7,round(E,4))
+Output(2,1,"rad/π=")
+""")
+exact("E/180", 2, 7)
+T("""
+If fPart(E/90):Then:Output(3,1,"quadrant"):Output(3,10,1+int(E/90)):Else:Output(3,1,"on an axis"):End
+Output(4,1,"ref angle=")
+Output(4,11,round(G,4))
+Output(5,1,"sin=")
+""")
+exact("S", 5, 5)
+T('Output(6,1,"cos=")')
+exact("C", 6, 5)
+T("""
+Output(7,1,"tan=")
+If not(C)
+Goto @U4
+""")
+exact("S/C", 7, 5)
+T("""
+Goto @U5
+Lbl @U4
+Output(7,5,"undefined")
+Lbl @U5
+Output(8,1,"sin")
+Output(8,4,sub("0+-",1+(S>0)+2(S<0),1))
+Output(8,6,"cos")
+Output(8,9,sub("0+-",1+(C>0)+2(C<0),1))
+Output(8,11,"tan")
+Output(8,14,sub("0+-?",1+(SC>0)+2(SC<0)+3not(C),1))
+Pause
+Goto @T3
+""")
+
+# ---------- Trig tools ----------
+menu("T4", "TRIG TOOLS", [
+    ("Cofunction eqn", "CO"),
+    ("Law of sines", "LS"),
+    ("Law of cosines", "LC"),
+    ("Similar tri", "SM"),
+    ("Back", "TC"),
+])
+T("""
+Lbl @CO
+ClrHome
+Disp "sin(ax+b)°","=cos(cx+d)°"
+Input "a=",A
+Input "b=",B
+Input "c=",C
+Input "d=",D
+ClrHome
+If A+C
+Then
+(90-B-D)/(A+C)→V
+Disp "angles sum to 90"
+Disp "x="
+Disp V►Frac
+Disp "1st angle (°)"
+Disp AV+B►Frac
+Disp "2nd angle (°)"
+Disp CV+D►Frac
+Else
+Disp "a+c CAN'T BE 0"
+End
+Pause
+Goto @T4
+Lbl @LS
+ClrHome
+Disp "LAW OF SINES","2 angles + side","a (opposite A)"
+Input "angle A°=",A
+Input "angle B°=",B
+Input "side a=",P
+ClrHome
+180-A-B→C
+If A≤0 or B≤0 or C≤0 or P≤0
+Goto @LSX
+Psin(B°)/sin(A°)→M
+Psin(C°)/sin(A°)→N
+Disp "angle C (°)"
+Disp C
+Disp "side b"
+Disp round(M,6)
+Disp "side c"
+Disp round(N,6)
+Disp "area"
+Disp round(PMsin(C°)/2,6)
+Pause
+Goto @T4
+Lbl @LSX
+Disp "ANGLES MUST SUM","< 180, side > 0"
+Pause
+Goto @T4
+""")
+menu("LC", "LAW OF COSINES", [
+    ("2 sides+angle", "C1"),
+    ("3 sides", "C2"),
+    ("Back", "T4"),
+])
+T("""
+Lbl @C1
+ClrHome
+Disp "SIDES a, b AND","angle C between"
+Input "side a=",A
+Input "side b=",B
+Input "angle C°=",D
+ClrHome
+If A≤0 or B≤0 or D≤0 or D≥180
+Goto @CX
+√(A²+B²-2ABcos(D°))→C
+45/tan⁻¹(1)→F
+Fcos⁻¹((B²+C²-A²)/(2BC))→E
+Disp "side c"
+Disp round(C,6)
+Disp "angle A (°)"
+Disp round(E,4)
+Disp "angle B (°)"
+Disp round(180-D-E,4)
+Disp "area"
+Disp round(ABsin(D°)/2,6)
+Pause
+Goto @LC
+Lbl @C2
+ClrHome
+Disp "3 SIDES a, b, c"
+Input "a=",A
+Input "b=",B
+Input "c=",C
+ClrHome
+If A≤0 or B≤0 or C≤0 or A+B≤C or A+C≤B or B+C≤A
+Goto @CX
+45/tan⁻¹(1)→F
+Fcos⁻¹((B²+C²-A²)/(2BC))→D
+Fcos⁻¹((A²+C²-B²)/(2AC))→E
+(A+B+C)/2→S
+Disp "angle A (°)"
+Disp round(D,4)
+Disp "angle B (°)"
+Disp round(E,4)
+Disp "angle C (°)"
+Disp round(180-D-E,4)
+Disp "area (Heron)"
+Disp round(√(S(S-A)(S-B)(S-C)),6)
+Pause
+Goto @LC
+Lbl @CX
+Disp "NOT A VALID","TRIANGLE"
+Pause
+Goto @LC
+Lbl @SM
+ClrHome
+Disp "SIMILAR TRI'S","matching sides:"
+Input "small side=",A
+Input "big side=",B
+Input "other small=",C
+ClrHome
+If A
+Then
+B/A→M
+Disp "SCALE k=big/sm"
+Disp M►Frac
+Disp "MATCHING BIG"
+Disp CM►Frac
+Disp "AREA RATIO k²"
+Disp M²►Frac
+Disp "VOLUME RATIO k³"
+Disp M³►Frac
+Else
+Disp "SIDE CAN'T BE 0"
+End
+Pause
+Goto @T4
+""")
+
+# ---------- Lessons ----------
+menu("T5", "LEARN TRIG", [
+    ("SOH CAH TOA", "TL1"),
+    ("Special tri", "TL2"),
+    ("Unit circle", "TL3"),
+    ("Radians/arcs", "TL4"),
+    ("Identities", "TL5"),
+    ("Traps + tips", "TL6"),
+    ("Back", "TC"),
+])
+
+pager("TL1", "SOH CAH TOA", [
+    ["For angle θ in a",
+     " right triangle:",
+     "sin = opp/hyp",
+     "cos = adj/hyp",
+     "tan = opp/adj",
+     "hyp: across 90°"],
+    ["OPP = side",
+     " across from θ",
+     "ADJ = side that",
+     " touches θ",
+     " (not the hyp)",
+     "Use YOUR angle!"],
+    ["Ex: legs 3, 4,",
+     " hyp 5. Angle A",
+     " is opp side 3:",
+     "sin A = 3/5",
+     "cos A = 4/5",
+     "tan A = 3/4"],
+    ["Find a side:",
+     " opp = hyp*sin",
+     " adj = hyp*cos",
+     " opp = adj*tan",
+     "Find an angle:",
+     " sin⁻¹, cos⁻¹.."],
+    ["SIMILAR tri's",
+     " have the SAME",
+     " trig ratios.",
+     "sin A = 3/5 in",
+     " one means 3/5",
+     " in every copy."],
+    ["Ratios depend on",
+     " the ANGLE only,",
+     " not the size.",
+     "Acute angle:",
+     " 0<sin,cos<1",
+     " tan can be >1"],
+], "T5")
+
+pager("TL2", "SPECIAL TRI", [
+    ["45-45-90",
+     " legs:  x, x",
+     " hyp:   x√(2)",
+     "Isosceles right",
+     " triangle",
+     "hyp = leg*√(2)"],
+    ["30-60-90",
+     " short: x",
+     " long:  x√(3)",
+     " hyp:   2x",
+     "short is opp 30°",
+     "long is opp 60°"],
+    ["Going backward:",
+     "45: leg=hyp/√(2)",
+     "  = hyp*√(2)/2",
+     "30-60-90:",
+     " short = hyp/2",
+     " short=long/√(3)"],
+    ["Spot them:",
+     "angle 30 or 60",
+     " or hyp=2*short",
+     " -> 30-60-90",
+     "angle 45 or",
+     " equal legs ->45"],
+    ["Equilateral tri",
+     " split in half =",
+     " two 30-60-90s",
+     "height=s√(3)/2",
+     "area=s²√(3)/4",
+     "Sq. diag=s√(2)"],
+    ["Pythag. triples",
+     " 3-4-5",
+     " 5-12-13",
+     " 8-15-17",
+     " 7-24-25",
+     "...and multiples"],
+], "T5")
+
+pager("TL3", "UNIT CIRCLE", [
+    ["Unit circle r=1",
+     "Point at angle θ",
+     " = (cos θ,sin θ)",
+     "x = cos, y = sin",
+     "tan = sin/cos",
+     " = slope of ray"],
+    ["θ  sin    cos",
+     "0  0      1",
+     "30 1/2    √(3)/2",
+     "45 √(2)/2 √(2)/2",
+     "60 √(3)/2 1/2",
+     "90 1      0"],
+    ["θ   tan",
+     "0   0",
+     "30  √(3)/3",
+     "45  1",
+     "60  √(3)",
+     "90  undefined"],
+    ["Signs by quad.:",
+     "Q1 0-90:  all +",
+     "Q2 90-180: sin +",
+     "Q3 180-270:tan +",
+     "Q4 270-360:cos +",
+     "Mnemonic: ASTC"],
+    ["Reference angle:",
+     " Q2: 180-θ",
+     " Q3: θ-180",
+     " Q4: 360-θ",
+     "Value = ref's",
+     " value + sign"],
+    ["Ex: sin 150°",
+     " Q2, ref 30°",
+     " sin + in Q2",
+     " = 1/2",
+     "Ex: cos 240°",
+     " Q3,ref 60: -1/2"],
+    ["Coterminal:",
+     " +/- 360° (2π)",
+     " = same point",
+     "sin(-θ) = -sin θ",
+     "cos(-θ) = cos θ",
+     ""],
+], "T3" if PROG_NAME == "SATTRIG" else "T5")
+
+pager("TL4", "RADIANS", [
+    ["π rad = 180°",
+     "deg->rad: *π/180",
+     "rad->deg: *180/π",
+     "full turn = 2π",
+     "1 rad ~ 57.3°",
+     ""],
+    ["30° = π/6",
+     "45° = π/4",
+     "60° = π/3",
+     "90° = π/2",
+     "180° = π",
+     "360° = 2π"],
+    ["120° = 2π/3",
+     "135° = 3π/4",
+     "150° = 5π/6",
+     "210° = 7π/6",
+     "270° = 3π/2",
+     "330° = 11π/6"],
+    ["Arc length:",
+     " s = rθ  (rad)",
+     " s=(deg/360)2πr",
+     "Sector area:",
+     " A = (1/2)r²θ",
+     " A=(deg/360)πr²"],
+    ["Central angle",
+     " in radians =",
+     " arc / radius",
+     "Ex: arc 6, r 3",
+     " -> θ = 2 rad",
+     ""],
+    ["MODE matters!",
+     "sin(30) in RAD",
+     " mode = -.988",
+     "Type 30° (° is",
+     " in 2nd APPS)",
+     " works any mode"],
+], "T5")
+
+pager("TL5", "IDENTITIES", [
+    ["COFUNCTIONS:",
+     "sin x=cos(90-x)",
+     "cos x=sin(90-x)",
+     "So if sin A =",
+     " cos B, then",
+     " A + B = 90°"],
+    ["SAT favorite:",
+     "sin(2x+10)°",
+     " = cos(3x-5)°",
+     "2x+10+3x-5=90",
+     "5x+5=90",
+     "x = 17"],
+    ["In a right tri",
+     " w/ acute A, B:",
+     "sin A = cos B",
+     "cos A = sin B",
+     "tan A = 1/tan B",
+     ""],
+    ["PYTHAGOREAN:",
+     "sin²x+cos²x=1",
+     "If sin x = 3/5:",
+     " cos²x=1-9/25",
+     "  =16/25",
+     " cos x = 4/5"],
+    ["tan x=sinx/cosx",
+     "sin(-x)=-sin x",
+     "cos(-x)= cos x",
+     "sin(180-x)",
+     " = sin x",
+     "cos(180-x)=-cosx"],
+], "T5")
+
+pager("TL6", "TRIG TRAPS", [
+    ["TRAP: wrong side",
+     "OPP and ADJ",
+     " change with the",
+     " angle you use.",
+     "Re-label for",
+     " each angle!"],
+    ["TRAP: hyp is",
+     " always LONGEST",
+     " & opposite 90°",
+     "sin, cos never",
+     " above 1. An",
+     " answer >1=wrong"],
+    ["TRAP: deg/rad",
+     "Check MODE on a",
+     " real calc. This",
+     " app uses ° so",
+     " it works in",
+     " either mode."],
+    ["TIP: draw it!",
+     "Sketch, label",
+     " the angle and",
+     " the given sides",
+     "Write SOH CAH",
+     " TOA above it."],
+    ["TIP: no picture?",
+     "sin A = 5/13 ->",
+     " draw opp 5,",
+     " hyp 13, then",
+     " adj = 12 by",
+     " a²+b²=c²"],
+    ["TIP: radian Q?",
+     "Change to deg",
+     " if it's easier:",
+     " π/3 = 60°",
+     "TIP: Desmos is",
+     " built in. Use!"],
+], "T5")
+
+# ---------- Trig quiz: 10 generated question types ----------
+T("""
+Lbl @TQ
+0→L
+0→T
+Lbl @TN
+randInt(1,10)→Z
+ClrHome
+Disp "","","","","",""
+Output(1,1,"TRIG Q")
+Output(1,7,T+1)
+""")
+
+
+def t_ratio():
+    triple()
+    T("""
+randInt(1,3)→V
+Output(2,1,"Right triangle")
+""")
+    seg_row(3, ["a=", ("n", "A"), " b=", ("n", "B")])
+    seg_row(4, ["c=", ("n", "C"), " (hyp)"])
+    T("""
+Output(5,1,"A is opp a.")
+If V=1:Then:Output(6,1,"Find sin A"):A/C→X:End
+If V=2:Then:Output(6,1,"Find cos A"):B/C→X:End
+If V=3:Then:Output(6,1,"Find tan A"):A/B→X:End
+""")
+
+
+def t_cofunction():
+    T("""
+randInt(1,4)→A
+randInt(1,4)→C
+randInt(2,int(80/(A+C)))→X
+90-(A+C)X→N
+randInt(0,N)→B
+N-B→D
+Output(2,1,"Find x if")
+""")
+    seg_row(3, ["sin(", ("c", "A", "x"), ("t", "B"), ")°"])
+    seg_row(4, ["=cos(", ("c", "C", "x"), ("t", "D"), ")°"])
+
+
+def t_special():
+    T("""
+randInt(1,4)→V
+randInt(2,9)→P
+If V≤2 or V=4:Output(2,1,"30-60-90 tri")
+If V=3:Output(2,1,"45-45-90 tri")
+If V=1
+Then
+""")
+    T("2P→H")
+    seg_row(3, ["hyp = ", ("n", "H")])
+    T("""
+Output(4,1,"Find short leg")
+P→X
+End
+If V=2 or V=4
+Then
+""")
+    seg_row(3, ["short leg = ", ("n", "P")])
+    T("""
+If V=2:Then:Output(4,1,"Find hyp"):2P→X:End
+If V=4:Then:Output(4,1,"Find long leg"):P√(3)→X:End
+End
+If V=3
+Then
+""")
+    seg_row(3, ["leg = ", ("n", "P")])
+    T("""
+Output(4,1,"Find hyp")
+P√(2)→X
+End
+Output(5,1,"(4√(2) is ok)")
+""")
+
+
+def t_unit():
+    T("""
+randInt(0,2)→N
+30+15N→B
+randInt(0,3)→H
+(H=0)B+(H=1)(180-B)+(H=2)(180+B)+(H=3)(360-B)→D
+randInt(1,3)→V
+If V=1:round(sin(D°),9)→X
+If V=2:round(cos(D°),9)→X
+If V=3:round(tan(D°),9)→X
+Output(2,1,"Exact value of")
+""")
+    seg_row(3, [("n", "D"), "°:"])
+    T("""
+If V=1:Output(4,1,"sin")
+If V=2:Output(4,1,"cos")
+If V=3:Output(4,1,"tan")
+Output(5,1,"ex: -√(3)/2")
+""")
+
+
+def t_radians():
+    T("""
+15randInt(1,24)→D
+gcd(D,180)→H
+D/H→N
+180/H→P
+randInt(0,1)→V
+If V
+Then
+Output(2,1,"Write in rad:")
+""")
+    seg_row(3, [("n", "D"), "° = ?π"])
+    T("""
+Output(4,1,"Find ?")
+D/180→X
+Else
+Output(2,1,"Write in deg:")
+1→θ
+If N≠1:Then:Output(3,θ,N):θ+W(N)→θ:End
+Output(3,θ,"π")
+θ+1→θ
+If P≠1:Then:Output(3,θ,"/"):Output(3,θ+1,P):End
+Output(4,1,"radians = ?°")
+D→X
+End
+""")
+
+
+def t_arc():
+    T("""
+randInt(2,12)→P
+15randInt(2,16)→D
+randInt(0,1)→V
+""")
+    seg_row(2, ["Circle r=", ("n", "P")])
+    T('Output(3,1,"central angle")')
+    seg_row(4, ["= ", ("n", "D"), "°"])
+    T("""
+If V
+Then
+Output(5,1,"Arc length = kπ")
+DP/180→X
+Else
+Output(5,1,"Sector area=kπ")
+DP²/360→X
+End
+Output(6,1,"Find k.")
+""")
+
+
+def t_complement():
+    triple()
+    T("""
+randInt(1,2)→V
+Output(2,1,"Right triangle,")
+""")
+    seg_row(3, ["sin A = ", ("n", "A"), "/", ("n", "C")])
+    T("""
+If V=1:Then:Output(4,1,"Find cos B."):A/C→X:End
+If V=2:Then:Output(4,1,"Find cos A."):B/C→X:End
+Output(5,1,"(A,B acute)")
+""")
+
+
+def t_missing():
+    triple()
+    T('Output(2,1,"Right triangle")')
+    seg_row(3, ["leg=", ("n", "A"), ", hyp=", ("n", "C")])
+    T("""
+Output(4,1,"Find other leg")
+B→X
+""")
+
+
+def t_tan():
+    triple()
+    T("""
+randInt(1,2)→V
+""")
+    seg_row(2, ["tan A = ", ("n", "A"), "/", ("n", "B")])
+    T("""
+Output(3,1,"A is acute.")
+If V=1:Then:Output(4,1,"Find sin A"):A/C→X:End
+If V=2:Then:Output(4,1,"Find cos A"):B/C→X:End
+""")
+
+
+def t_angle():
+    T("""
+randInt(2,9)→P
+randInt(1,3)→V
+2P→H
+Output(2,1,"Right triangle")
+If V=1
+Then
+""")
+    seg_row(3, ["legs ", ("n", "P"), " and ", ("n", "P")])
+    T("""
+45→X
+End
+If V≥2
+Then
+""")
+    seg_row(3, ["hyp=", ("n", "H")])
+    T("If V=2")
+    T("Then")
+    seg_row(4, ["opp A = ", ("n", "P")])
+    T("""
+30→X
+Else
+""")
+    seg_row(4, ["adj A = ", ("n", "P")])
+    T("""
+60→X
+End
+End
+Output(5,1,"Find angle A°")
+""")
+
+
+for i, fn in enumerate([t_ratio, t_cofunction, t_special, t_unit, t_radians,
+                        t_arc, t_complement, t_missing, t_tan, t_angle], 1):
+    qtype(i, fn)
+
+T("""
+Input "answer=",G
+T+1→T
+abs(G-X)<.000001→V
+ClrHome
+If V
+Then
+L+1→L
+Output(1,1,"CORRECT!")
+Else
+Output(1,1,"NOT QUITE.")
+End
+Output(3,1,"answer:")
+""")
+exact("X", 3, 9)
+T("""
+Output(5,1,"SCORE:")
+Output(5,8,L)
+Output(5,8+W(L),"/")
+Output(5,9+W(L),T)
+Output(7,1,"ENTER: next")
+Output(8,1,"CLEAR: finish")
+0→K
+Repeat K=45 or K=105
+getKey→K
+End
+If K=105
+Goto @TN
+Goto @QF
+""")
+
+
+# =====================================================================
 # QUIT (last, so the program ends without printing "Done")
 # =====================================================================
 section("core")
@@ -1713,6 +2687,9 @@ def tokenize(lines: list[str]) -> bytes:
                     if part.startswith("√(", j):
                         out += b"\xbc"
                         j += 2
+                    elif part.startswith("⁻¹", j):
+                        out += b"\x0c"
+                        j += 2
                     else:
                         out += str_char(part[j])
                         j += 1
@@ -1729,7 +2706,7 @@ def main() -> None:
 
     if PROBLEMS:
         sys.exit("\n".join(PROBLEMS))
-    lines = select_sections(code, CFG["sections"])
+    lines = select_sections(exact_routine() + code, CFG["sections"])
     if CFG["upper"]:
         lines = [upper_strings(l) for l in lines]
     errs = check_structure(lines)

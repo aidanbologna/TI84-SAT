@@ -79,10 +79,6 @@ CASES = [
     ("Circle r=2√2", ["Geometry/Stats", "Circle eqn"], ["1", "0", "0", "~8"], 1),
     ("Circle 2x²..", ["Geometry/Stats", "Circle eqn"], ["2", "8", "~4", "~8"], 1),
     ("Circle invalid", ["Geometry/Stats", "Circle eqn"], ["1", "0", "0", "5"], 1),
-    ("Right tri 3,4", ["Geometry/Stats", "Right triangle"], ["3", "4", "0"], 2),
-    ("Right tri b=5,c=13", ["Geometry/Stats", "Right triangle"], ["0", "5", "13"], 2),
-    ("Right tri 1,1", ["Geometry/Stats", "Right triangle"], ["1", "1", "0"], 2),
-    ("Right tri invalid", ["Geometry/Stats", "Right triangle"], ["5", "0", "3"], 1),
     ("Arc deg", ["Geometry/Stats", "Arc & sector", "Degrees"], ["6", "60"], 2),
     ("Arc rad", ["Geometry/Stats", "Arc & sector", "Radians"], ["3", "π/3"], 2),
     ("Stats", ["Geometry/Stats", "Mean/Median/SD"], ["{2,5,9,4}"], 2),
@@ -94,7 +90,5 @@ for title, path, inputs, pauses in CASES:
     m, err = solver(path, inputs, pauses)
     ok &= show(title, m, err)
 
-m, err = solver(["Geometry/Stats", "Right triangle"], ["3", "4", "0"], 2, degree=True)
-ok &= show("Right tri 3,4 in DEGREE mode", m, err)
 
 sys.exit(0 if ok else 1)

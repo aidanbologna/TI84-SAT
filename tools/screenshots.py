@@ -134,8 +134,16 @@ line = screens(capture("SAT", [ENTER, M("Math Solvers"), M("Line: 2 points"), I(
                                ENTER, ENTER]))
 circle = screens(capture("SAT", [ENTER, M("Math Solvers"), M("Geometry/Stats"), M("Circle eqn"),
                                  I("1"), I("~6"), I("4"), I("~7"), ENTER]))
-tri = screens(capture("SAT", [ENTER, M("Math Solvers"), M("Geometry/Stats"), M("Right triangle"),
-                              I("0"), I("5"), I("13"), ENTER, ENTER]))
+TCP = [ENTER, M("Trig Center")]
+tri = screens(capture("SAT", TCP + [M("Right triangle"), I("1"), I("2"), I("0"), I("0"), ENTER, ENTER, ENTER]))
+tri30 = screens(capture("SAT", TCP + [M("Right triangle"), I("0"), I("0"), I("10"), I("30"), ENTER, ENTER, ENTER]))
+special = screens(capture("SAT", TCP + [M("Special tri"), M("30-60-90"), M("Long leg x√(3)"), I("6"), ENTER]))
+unit = screens(capture("SAT", TCP + [M("Unit circle"), M("Angle in deg"), I("150"), ENTER]))
+cofn = screens(capture("SAT", TCP + [M("Trig tools"), M("Cofunction eqn"), I("2"), I("10"), I("3"), I("~5"),
+                                     ENTER]))
+tc_menu = menus(capture("SAT", TCP))[-1]
+learn_menu = menus(capture("SAT", TCP + [M("Learn trig")]))[-1]
+tools_menu = menus(capture("SAT", TCP + [M("Trig tools")]))[-1]
 geo_menu = menus(capture("SAT", [ENTER, M("Math Solvers"), M("Geometry/Stats")]))[-1]
 
 
@@ -162,7 +170,11 @@ quad_pages = pages(["Math Formulas", "Quadratics"], 4)
 circle_pages = pages(["Math Formulas", "More formulas", "Circles"], 4)
 punct_pages = pages(["R&W Guide", "Punctuation"], 7)
 trans_pages = pages(["R&W Guide", "Transitions"], 6)
-strat_pages = pages(["Test Strategy"], 5)
+strat_pages = pages(["Strategy/Help", "Test Strategy"], 5)
+soh_pages = pages(["Trig Center", "Learn trig", "SOH CAH TOA"], 6)
+uc_pages = pages(["Trig Center", "Learn trig", "Unit circle"], 7)
+id_pages = pages(["Trig Center", "Learn trig", "Identities"], 5)
+trap_pages = pages(["Trig Center", "Learn trig", "Traps + tips"], 6)
 rw_menu = menus(capture("SAT", [ENTER, M("R&W Guide")]))[-1]
 fa_menu = menus(capture("SAT", [ENTER, M("Math Formulas")]))[-1]
 
@@ -233,6 +245,53 @@ def quiz_grammar():
     return shots
 
 
+def quiz_trig(seed):
+    shots = []
+    state = {"n": 0}
+
+    def ev(kind, m):
+        if kind == "enter":
+            return None
+        if kind == "menu":
+            return "Trig Center" if m.snaps[-1][1][0] == "SAT TOOLKIT" else "Trig quiz"
+        if kind == "input":
+            state["n"] += 1
+            if state["n"] > 4:
+                raise OutOfEvents()
+            shots.append(("q", int(m.vars["Z"]), ["".join(r) for r in m.screen], m.vars["X"]))
+            return repr(m.vars["X"] + (0 if state["n"] % 2 else 1)).replace("-", "~")
+        if kind == "key":
+            shots.append(("fb", int(m.vars["Z"]), ["".join(r) for r in m.screen], None))
+            return 105
+    src = (ROOT / "source" / "SAT.txt").read_text(encoding="utf-8").rstrip("\n")
+    m = Capture(src, ev, False, seed)
+    try:
+        m.run()
+    except OutOfEvents:
+        pass
+    return shots
+
+
+def with_answer(rows, typed):
+    rows = [list(r) for r in rows]
+    for i, ch in enumerate(("answer=" + typed)[:16]):
+        rows[6][i] = ch
+    return ["".join(r) for r in rows]
+
+
+# find a unit-circle question (exact answer typed with √) and a triangle-ratio one
+tq_unit = tq_ratio = None
+for seed in range(60):
+    for i, (kind, z, rows, x) in enumerate(quiz_trig(seed)):
+        if kind == "q" and z == 4 and tq_unit is None and abs(x) not in (0, 1, .5):
+            tq_unit = (rows, seed, i)
+        if kind == "q" and z == 1 and tq_ratio is None:
+            tq_ratio = (rows, seed, i)
+    if tq_unit and tq_ratio:
+        break
+tq_unit_fb = quiz_trig(tq_unit[1])[tq_unit[2] + 1][2]
+tq_ratio_fb = quiz_trig(tq_ratio[1])[tq_ratio[2] + 1][2]
+
 mq = quiz_math()
 gq = quiz_grammar()
 
@@ -250,8 +309,25 @@ save(render_rows(quad_vertex), "quadratic-vertex")
 save(render_rows(line[2]), "line-slope")
 save(render_rows(line[3]), "line-distance")
 save(render_rows(circle[2]), "circle")
-save(render_rows(tri[2]), "triangle-sides")
-save(render_rows(tri[3]), "triangle-trig")
+save(render_menu(tc_menu), "trig-menu")
+save(render_menu(learn_menu), "trig-learn-menu")
+save(render_menu(tools_menu), "trig-tools-menu")
+save(render_rows(tri[1]), "trig-right-input")
+save(render_rows(tri[2]), "trig-right-sides")
+save(render_rows(tri[3]), "trig-right-ratios")
+save(render_rows(tri30[2]), "trig-right-30-sides")
+save(render_rows(tri30[3]), "trig-right-30-ratios")
+save(render_rows(tri30[4]), "trig-right-30-notes")
+save(render_rows(special[2]), "trig-special-30-60-90")
+save(render_rows(unit[2]), "trig-unit-circle-150")
+save(render_rows(cofn[2]), "trig-cofunction")
+save(render_rows(soh_pages[0]), "trig-lesson-soh")
+save(render_rows(uc_pages[1]), "trig-lesson-unit-table")
+save(render_rows(uc_pages[3]), "trig-lesson-quadrants")
+save(render_rows(id_pages[1]), "trig-lesson-cofunction")
+save(render_rows(trap_pages[1]), "trig-lesson-trap")
+save(render_rows(tq_unit[0]), "trig-quiz-question")
+save(render_rows(tq_unit_fb), "trig-quiz-feedback")
 save(render_rows(quad_pages[0]), "formula-quadratics")
 save(render_rows(circle_pages[2]), "formula-circles")
 save(render_rows(punct_pages[0]), "rw-punctuation")
@@ -267,8 +343,16 @@ save(render_rows(gq[1][1]), "quiz-grammar-feedback")
 save(grid([render_rows(splash), render_menu(main_menu), render_menu(solver_menu)], 3), "sheet-menus")
 save(grid([render_rows(quad_in), render_rows(quad_res), render_rows(quad_exact), render_rows(quad_vertex)], 2),
      "sheet-quadratic")
-save(grid([render_rows(line[2]), render_rows(line[3]), render_rows(circle[2]), render_rows(tri[3])], 2),
+save(grid([render_rows(line[2]), render_rows(line[3]), render_rows(circle[2]), render_menu(geo_menu)], 2),
      "sheet-solvers")
+save(grid([render_menu(tc_menu), render_rows(tri[1]), render_rows(tri[2]), render_rows(tri[3])], 2),
+     "sheet-trig-right")
+save(grid([render_rows(tri30[2]), render_rows(tri30[3]), render_rows(special[2]), render_rows(unit[2])], 2),
+     "sheet-trig-exact")
+save(grid([render_menu(learn_menu), render_rows(uc_pages[1]), render_rows(uc_pages[3]), render_rows(id_pages[1])], 2),
+     "sheet-trig-learn")
+save(grid([render_menu(tools_menu), render_rows(cofn[2]), render_rows(tq_ratio[0]), render_rows(tq_ratio_fb)], 2),
+     "sheet-trig-tools-quiz")
 save(grid([render_rows(quad_pages[0]), render_rows(circle_pages[2]), render_rows(punct_pages[0]),
            render_rows(trans_pages[1])], 2), "sheet-reference")
 save(grid([render_rows(mq[0][1]), render_rows(mq[1][1]), render_rows(gq[0][1]), render_rows(gq[1][1])], 2),
@@ -303,14 +387,22 @@ add(render_rows(quad_res), 2200)
 add(render_rows(quad_exact), 2200)
 add(render_rows(quad_vertex), 2200)
 add(render_menu(main_menu, 2), 1000)
+add(render_menu(tc_menu, 1), 1000)
+for r in typing(tri30[1], 3, 4):
+    add(render_rows(r), 500)
+add(render_rows(tri30[2]), 2400)
+add(render_rows(tri30[3]), 2400)
+add(render_menu(tc_menu, 3), 1000)
+add(render_rows(unit[2]), 2400)
+add(render_menu(main_menu, 3), 1000)
 add(render_menu(fa_menu, 2), 1000)
 for p in quad_pages:
     add(render_rows(p), 1400)
-add(render_menu(main_menu, 3), 1000)
+add(render_menu(main_menu, 4), 1000)
 add(render_menu(rw_menu, 1), 1000)
 for p in punct_pages[:3]:
     add(render_rows(p), 1400)
-add(render_menu(main_menu, 4), 1000)
+add(render_menu(main_menu, 5), 1000)
 add(render_rows(gq[0][1]), 2000)
 add(render_rows(gq[1][1]), 2200)
 

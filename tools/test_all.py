@@ -33,10 +33,15 @@ PAGERS = {
     + [("Math Formulas", "More formulas", t) for t in ["Geometry", "Circles", "Triangles/Trig", "Statistics",
                                                         "Probability", "Percent/Units"]]
     + [("R&W Guide", t) for t in ["Punctuation", "Grammar", "Transitions", "Notes Qs", "Reading Qs", "R&W Strategy"]]
-    + [("Test Strategy",), ("How To Use",)],
+    + [("Strategy/Help", "Test Strategy"), ("Strategy/Help", "How To Use")]
+    + [("Trig Center", "Learn trig", t) for t in ["SOH CAH TOA", "Special tri", "Unit circle", "Radians/arcs",
+                                                   "Identities", "Traps + tips"]]
+    + [("Trig Center", "Unit circle", "Values table")],
 }
-PAGERS["SATMATH"] = [p for p in PAGERS["SAT"] if p[0] != "R&W Guide"]
-PAGERS["SATRW"] = [p for p in PAGERS["SAT"] if p[0] not in ("Math Formulas",)]
+HELP = [("Test Strategy",), ("How To Use",)]
+PAGERS["SATMATH"] = [p for p in PAGERS["SAT"] if p[0] == "Math Formulas"] + HELP
+PAGERS["SATRW"] = [p for p in PAGERS["SAT"] if p[0] == "R&W Guide"] + HELP
+PAGERS["SATTRIG"] = [p[1:] for p in PAGERS["SAT"] if p[0] == "Trig Center"]
 
 page_shots = []
 for target, paths in PAGERS.items():
@@ -130,6 +135,37 @@ for target, types in all_types.items():
     if types != set(range(1, 11)):
         problems.append(f"{target} math quiz: only saw types {sorted(types)}")
 
+# ---------- trig quiz ----------
+trig_types = set()
+for target in ("SAT", "SATTRIG"):
+    for seed in range(4):
+        n = {"q": 0}
+
+        def ev(kind, m, n=n):
+            if kind == "enter":
+                return None
+            if kind == "menu":
+                title = m.snaps[-1][1][0].upper()
+                if n["q"]:
+                    raise OutOfEvents()  # back at a menu after the final score
+                if title == "SAT TOOLKIT":
+                    return "Trig Center"
+                return "Trig quiz"
+            if kind == "input":
+                n["q"] += 1
+                trig_types.add(int(m.vars["Z"]))
+                x = m.vars["X"]
+                return repr(x if n["q"] % 4 else x + 1).replace("-", "~")
+            if kind == "key":
+                return 105 if n["q"] < 40 else 45
+        m = machine(target, ev, seed=seed, degree=bool(seed % 2))
+        go(target, m, f"trig quiz seed {seed}")
+        final = [s for s in m.snaps if s[0] == "Pause"][-1][1]
+        if "30/40" not in "".join(final).replace(" ", ""):
+            problems.append(f"{target} trig quiz seed {seed}: final screen {final}")
+if trig_types != set(range(1, 11)):
+    problems.append(f"trig quiz: only saw types {sorted(trig_types)}")
+
 # ---------- grammar quiz ----------
 KEYS = {1: 92, 2: 93, 3: 94, 4: 82}
 for target in ("SAT", "SATRW"):
@@ -186,7 +222,7 @@ for target in ("SAT", "SATRW"):
 # ---------- fuzz: random walk through everything ----------
 POOL = ["0", "1", "2", "~3", "5", "1/2", "~2/3", "10", "100", "~100", "7", "3.5", "π", "~1", "12"]
 LISTS = ["{1}", "{2,5,9}", "{3,3,3}", "{~4,0,10,2}"]
-for target in TARGETS if (TARGETS := ["SAT", "SATMATH", "SATRW"]) else []:
+for target in TARGETS if (TARGETS := ["SAT", "SATMATH", "SATTRIG", "SATRW"]) else []:
     for seed in range(150):
         r = random.Random(seed)
         budget = {"n": 0}

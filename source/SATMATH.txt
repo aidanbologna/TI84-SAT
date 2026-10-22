@@ -305,7 +305,7 @@ End
 Pause
 Goto AC
 Lbl AD
-Menu("GEOMETRY/STATS","CIRCLE EQN",AN,"RIGHT TRIANGLE",AO,"ARC & SECTOR",AP,"MEAN/MEDIAN/SD",AQ,"MISSING VALUE",AR,"DEG <-> RAD",AS,"BACK",A0)
+Menu("GEOMETRY/STATS","CIRCLE EQN",AN,"ARC & SECTOR",AO,"MEAN/MEDIAN/SD",AP,"MISSING VALUE",AQ,"DEG <-> RAD",AR,"BACK",A0)
 Lbl AN
 ClrHome
 Disp "AX²+AY²+DX+EY","+F=0 (OFTEN A=1)"
@@ -347,59 +347,20 @@ End
 Pause
 Goto AD
 Lbl AO
-ClrHome
-Disp "RIGHT TRIANGLE","LEGS A,B; HYP C","0 = UNKNOWN"
-Input "A=",A
-Input "B=",B
-Input "C=",C
-abs(A)→A
-abs(B)→B
-abs(C)→C
-If not(C):√(A²+B²)→C
-If not(A) and C>B:√(C²-B²)→A
-If not(B) and C>A:√(C²-A²)→B
-ClrHome
-If A≤0 or B≤0 or C≤max(A,B)
-Goto AT
-45/tan⁻¹(1)→F
-Disp "SIDES A, B, C"
-Disp round(A,4)
-Disp round(B,4)
-Disp round(C,4)
-Disp "ANGLE A (OPP A)"
-Disp round(Ftan⁻¹(A/B),4)
-Disp "ANGLE B"
-Disp round(90-Ftan⁻¹(A/B),4)
-Pause
-ClrHome
-Disp "SIN A = A/C"
-Disp A/C►Frac
-Disp "COS A = B/C"
-Disp B/C►Frac
-Disp "TAN A = A/B"
-Disp A/B►Frac
-Disp "TIP: SINA=COSB"
-Pause
-Goto AD
-Lbl AT
-Disp "NEED 2 VALID","SIDES (C = HYP)"
-Pause
-Goto AD
-Lbl AP
-Menu("ANGLE UNITS?","DEGREES",AU,"RADIANS",AV,"BACK",AD)
-Lbl AU
+Menu("ANGLE UNITS?","DEGREES",AS,"RADIANS",AT,"BACK",AD)
+Lbl AS
 ClrHome
 Disp "ARC & SECTOR"
 Input "RADIUS R=",R
 Input "ANGLE DEG=",D
 πD/180→T
-Goto AW
-Lbl AV
+Goto AU
+Lbl AT
 ClrHome
 Disp "ARC & SECTOR","(π KEY IS OK)"
 Input "RADIUS R=",R
 Input "ANGLE RAD=",T
-Lbl AW
+Lbl AU
 ClrHome
 Disp "ARC LENGTH"
 Disp RT
@@ -420,7 +381,7 @@ Disp "CIRCUMFERENCE"
 Disp 2πR
 Pause
 Goto AD
-Lbl AQ
+Lbl AP
 ClrHome
 Disp "ENTER A LIST","LIKE {2,5,9}"
 Input "LIST=",L₆
@@ -447,7 +408,7 @@ Disp "SORTED:"
 Disp L₆
 Pause
 Goto AD
-Lbl AR
+Lbl AQ
 ClrHome
 Disp "ADD 1 VALUE TO","HIT A NEW MEAN"
 Input "COUNT N=",N
@@ -462,9 +423,9 @@ Disp "SUM NEEDED"
 Disp (N+1)T►Frac
 Pause
 Goto AD
-Lbl AS
-Menu("CONVERT ANGLE","DEG -> RADIANS",AX,"RAD -> DEGREES",AY,"BACK",AD)
-Lbl AX
+Lbl AR
+Menu("CONVERT ANGLE","DEG -> RADIANS",AV,"RAD -> DEGREES",AW,"BACK",AD)
+Lbl AV
 ClrHome
 Input "DEGREES=",D
 Disp "RADIANS / π"
@@ -472,20 +433,20 @@ Disp D/180►Frac
 Disp "RADIANS"
 Disp πD/180
 Pause
-Goto AS
-Lbl AY
+Goto AR
+Lbl AW
 ClrHome
 Disp "(π KEY IS OK)"
 Input "RADIANS=",T
 Disp "DEGREES"
 Disp 180T/π►Frac
 Pause
-Goto AS
+Goto AR
 Lbl A1
-Menu("ALGEBRA FORMULAS","LINEAR EQNS",AZ,"QUADRATICS",B0,"EXPONENTS/RADS",B1,"EXPONENTIAL",B2,"FUNCTIONS",B3,"MORE FORMULAS",B4,"MAIN MENU",A6)
-Lbl B4
-Menu("GEOMETRY + DATA","GEOMETRY",B5,"CIRCLES",B6,"TRIANGLES/TRIG",B7,"STATISTICS",B8,"PROBABILITY",B9,"PERCENT/UNITS",BA,"BACK",A1)
-Lbl AZ
+Menu("ALGEBRA FORMULAS","LINEAR EQNS",AX,"QUADRATICS",AY,"EXPONENTS/RADS",AZ,"EXPONENTIAL",B0,"FUNCTIONS",B1,"MORE FORMULAS",B2,"MAIN MENU",A6)
+Lbl B2
+Menu("GEOMETRY + DATA","GEOMETRY",B3,"CIRCLES",B4,"TRIANGLES/TRIG",B5,"STATISTICS",B6,"PROBABILITY",B7,"PERCENT/UNITS",B8,"BACK",A1)
+Lbl AX
 1→P
 Repeat K=45 or P>4
 ClrHome
@@ -534,7 +495,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A1
-Lbl B0
+Lbl AY
 1→P
 Repeat K=45 or P>4
 ClrHome
@@ -583,7 +544,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A1
-Lbl B1
+Lbl AZ
 1→P
 Repeat K=45 or P>2
 ClrHome
@@ -615,7 +576,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A1
-Lbl B2
+Lbl B0
 1→P
 Repeat K=45 or P>3
 ClrHome
@@ -655,7 +616,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A1
-Lbl B3
+Lbl B1
 1→P
 Repeat K=45 or P>3
 ClrHome
@@ -696,7 +657,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A1
-Lbl B5
+Lbl B3
 1→P
 Repeat K=45 or P>4
 ClrHome
@@ -745,8 +706,8 @@ getKey→K
 End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
-Goto B4
-Lbl B6
+Goto B2
+Lbl B4
 1→P
 Repeat K=45 or P>4
 ClrHome
@@ -794,8 +755,8 @@ getKey→K
 End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
-Goto B4
-Lbl B7
+Goto B2
+Lbl B5
 1→P
 Repeat K=45 or P>4
 ClrHome
@@ -843,8 +804,8 @@ getKey→K
 End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
-Goto B4
-Lbl B8
+Goto B2
+Lbl B6
 1→P
 Repeat K=45 or P>4
 ClrHome
@@ -892,8 +853,8 @@ getKey→K
 End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
-Goto B4
-Lbl B9
+Goto B2
+Lbl B7
 1→P
 Repeat K=45 or P>2
 ClrHome
@@ -923,8 +884,8 @@ getKey→K
 End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
-Goto B4
-Lbl BA
+Goto B2
+Lbl B8
 1→P
 Repeat K=45 or P>3
 ClrHome
@@ -964,7 +925,7 @@ getKey→K
 End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
-Goto B4
+Goto B2
 Lbl A3
 1→P
 Repeat K=45 or P>5
@@ -1045,7 +1006,7 @@ Goto A6
 Lbl A7
 0→L
 0→T
-Lbl BI
+Lbl BG
 randInt(1,10)→Z
 ClrHome
 Disp "","","","","",""
@@ -1347,9 +1308,9 @@ Repeat K=45 or K=105
 getKey→K
 End
 If K=105
-Goto BI
-Goto BJ
-Lbl BJ
+Goto BG
+Goto BH
+Lbl BH
 ClrHome
 Output(2,1,"FINAL SCORE")
 Output(4,1,L)

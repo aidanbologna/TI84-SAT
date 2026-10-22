@@ -13,11 +13,11 @@ class OutOfEvents(Exception):
     pass
 
 
-FUNCS = ["tan⁻¹(", "randInt(", "median(", "fPart(", "round(", "mean(", "not(", "abs(", "int(",
+FUNCS = ["tan⁻¹(", "sin⁻¹(", "cos⁻¹(", "sin(", "cos(", "tan(", "randInt(", "median(", "fPart(", "round(", "mean(", "not(", "abs(", "int(",
          "log(", "gcd(", "max(", "min(", "sum(", "dim(", "sub(", "√("]
 TOKEN_RE = re.compile(
     r'\s*(?:(?P<str>"[^"]*"?)|(?P<num>\d+\.?\d*|\.\d+)|(?P<func>' + "|".join(re.escape(f) for f in FUNCS) +
-    r')|(?P<word>getKey|and|or|pi)|(?P<list>L₆)|(?P<frac>►Frac)|(?P<var>[A-Zθ])|(?P<op>≠|≤|≥|[-+*/^²~=<>(){},π]))')
+    r')|(?P<word>getKey|and|or|pi)|(?P<list>L₆)|(?P<frac>►Frac)|(?P<var>[A-Zθ])|(?P<op>≠|≤|≥|[-+*/^²³°~=<>(){},π]))')
 
 
 def lex(s):
@@ -274,9 +274,14 @@ class Machine:
 
     def p_post(self):
         v = self.p_atom()
-        while self.peek() == ("op", "²"):
-            self.take()
-            v = elementwise(lambda a: a * a, v)
+        while self.peek()[1] in ("²", "³", "°"):
+            op = self.take()[1]
+            if op == "²":
+                v = elementwise(lambda a: a * a, v)
+            elif op == "³":
+                v = elementwise(lambda a: a ** 3, v)
+            elif not self.degree:  # x° means degrees in any mode
+                v = elementwise(math.radians, v)
         return v
 
     def args(self):
@@ -340,6 +345,17 @@ class Machine:
             return e(lg, a[0])
         if f == "√(":
             return e(sqrt, a[0])
+        if f in ("sin(", "cos(", "tan("):
+            fn = {"sin(": math.sin, "cos(": math.cos, "tan(": math.tan}[f]
+            return e(lambda x: fn(math.radians(x)) if self.degree else fn(x), a[0])
+        if f in ("sin⁻¹(", "cos⁻¹("):
+            fn = math.asin if f == "sin⁻¹(" else math.acos
+
+            def inv(x):
+                if abs(x) > 1:
+                    raise TIError("DOMAIN inverse trig")
+                return math.degrees(fn(x)) if self.degree else fn(x)
+            return e(inv, a[0])
         if f == "tan⁻¹(":
             return e(lambda x: math.degrees(math.atan(x)) if self.degree else math.atan(x), a[0])
         if f == "gcd(":
