@@ -137,10 +137,14 @@ circle = screens(capture("SAT", [ENTER, M("Math Solvers"), M("Geometry/Stats"), 
 TCP = [ENTER, M("Trig Center")]
 tri = screens(capture("SAT", TCP + [M("Right triangle"), I("1"), I("2"), I("0"), I("0"), ENTER, ENTER, ENTER]))
 tri30 = screens(capture("SAT", TCP + [M("Right triangle"), I("0"), I("0"), I("10"), I("30"), ENTER, ENTER, ENTER]))
-special = screens(capture("SAT", TCP + [M("Special tri"), M("30-60-90"), M("Long leg x√(3)"), I("6"), ENTER]))
+special = screens(capture("SAT", TCP + [M("Trig tools"), M("Special tri"), M("30-60-90"), M("Long leg x√(3)"), I("6"), ENTER]))
 unit = screens(capture("SAT", TCP + [M("Unit circle"), M("Angle in deg"), I("150"), ENTER]))
 cofn = screens(capture("SAT", TCP + [M("Trig tools"), M("Cofunction eqn"), I("2"), I("10"), I("3"), I("~5"),
                                      ENTER]))
+anyt = screens(capture("SAT", TCP + [M("Any triangle"), I("13"), I("14"), I("15"), I("0"), I("0"), I("0"),
+                                     I("0"), ENTER, ENTER, ENTER, ENTER]))
+ssa = screens(capture("SAT", TCP + [M("Any triangle"), I("6"), I("10"), I("0"), I("30"), I("0"), I("0"),
+                                    I("0")] + [ENTER] * 8))
 tc_menu = menus(capture("SAT", TCP))[-1]
 learn_menu = menus(capture("SAT", TCP + [M("Learn trig")]))[-1]
 tools_menu = menus(capture("SAT", TCP + [M("Trig tools")]))[-1]
@@ -310,6 +314,13 @@ save(render_rows(line[2]), "line-slope")
 save(render_rows(line[3]), "line-distance")
 save(render_rows(circle[2]), "circle")
 save(render_menu(tc_menu), "trig-menu")
+save(render_rows(anyt[1]), "any-triangle-input")
+save(render_rows(anyt[2]), "any-triangle-sides")
+save(render_rows(anyt[3]), "any-triangle-measures")
+save(render_rows(anyt[4]), "any-triangle-sin-cos")
+save(render_rows(anyt[5]), "any-triangle-tan")
+save(render_rows(ssa[2]), "any-triangle-ssa-1")
+save(render_rows(ssa[6]), "any-triangle-ssa-2")
 save(render_menu(learn_menu), "trig-learn-menu")
 save(render_menu(tools_menu), "trig-tools-menu")
 save(render_rows(tri[1]), "trig-right-input")
@@ -347,6 +358,10 @@ save(grid([render_rows(line[2]), render_rows(line[3]), render_rows(circle[2]), r
      "sheet-solvers")
 save(grid([render_menu(tc_menu), render_rows(tri[1]), render_rows(tri[2]), render_rows(tri[3])], 2),
      "sheet-trig-right")
+save(grid([render_rows(anyt[1]), render_rows(anyt[2]), render_rows(anyt[3]), render_rows(anyt[4])], 2),
+     "sheet-any-triangle")
+save(grid([render_rows(ssa[1]), render_rows(ssa[2]), render_rows(ssa[6]), render_rows(ssa[3])], 2),
+     "sheet-any-triangle-ssa")
 save(grid([render_rows(tri30[2]), render_rows(tri30[3]), render_rows(special[2]), render_rows(unit[2])], 2),
      "sheet-trig-exact")
 save(grid([render_menu(learn_menu), render_rows(uc_pages[1]), render_rows(uc_pages[3]), render_rows(id_pages[1])], 2),
@@ -388,8 +403,12 @@ add(render_rows(quad_exact), 2200)
 add(render_rows(quad_vertex), 2200)
 add(render_menu(main_menu, 2), 1000)
 add(render_menu(tc_menu, 1), 1000)
-for r in typing(tri30[1], 3, 4):
-    add(render_rows(r), 500)
+for r in typing(anyt[1], 1, 7):
+    add(render_rows(r), 400)
+add(render_rows(anyt[2]), 2400)
+add(render_rows(anyt[3]), 2400)
+add(render_rows(anyt[4]), 2400)
+add(render_menu(tc_menu, 2), 1000)
 add(render_rows(tri30[2]), 2400)
 add(render_rows(tri30[3]), 2400)
 add(render_menu(tc_menu, 3), 1000)

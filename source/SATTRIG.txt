@@ -1,14 +1,14 @@
-Goto D8
+Goto EA
 Lbl BS
 If abs(X)<.000000001
-Goto D9
-round(X²,9)→Y
+Goto EB
+X²→Y
 Y→Q
 0→I
 1→J
 1→U
 0→O
-Repeat abs(J/O-Y)<.000000002max(1,Y) or O>999
+Repeat abs(J/O-Y)<.00000000001max(1,Y) or O>9999
 int(Q)→W
 WJ+I→K
 J→I
@@ -18,32 +18,40 @@ O→U
 K→O
 If Q-W:1/(Q-W)→Q
 End
-If O>999 or JO>99999
-Goto DA
-JO→K
-int(√(K))→I
-While fPart(K/I²)
+If O>9999 or J>99999
+Goto EC
+If not(J)
+Goto EB
+int(√(J))→I
+While fPart(J/I²)
 I-1→I
 End
-K/I²→U
+J/I²→U
+int(√(O))→K
+While fPart(O/K²)
+K-1→K
+End
+O/K²→W
+UW→U
+KW→O
 gcd(I,O)→W
 I/W→I
 O/W→O
 (X<0)+(U=1 or I≠1)(1+(I<0)+int(log(abs(I)+not(I))))+(U≠1)(3+(1+(U<0)+int(log(abs(U)+not(U)))))+(O≠1)(1+(1+(O<0)+int(log(abs(O)+not(O)))))→K
 If θ+K>17
-Goto DA
+Goto EC
 If X<0:Then:Output(R,θ,"-"):θ+1→θ:End
 If U=1 or I≠1:Then:Output(R,θ,I):θ+(1+(I<0)+int(log(abs(I)+not(I))))→θ:End
 If U≠1:Then:Output(R,θ,"√("):Output(R,θ+2,U):θ+3+(1+(U<0)+int(log(abs(U)+not(U))))→θ:Output(R,θ-1,")"):End
 If O≠1:Then:Output(R,θ,"/"):Output(R,θ+1,O):θ+1+(1+(O<0)+int(log(abs(O)+not(O))))→θ:End
-Goto DB
-Lbl DA
-Output(R,θ,round(X,6))
-Goto DB
-Lbl D9
+Goto ED
+Lbl EC
+Output(R,θ,round(X,max(0,min(6,16-θ-(X<0)-int(log(max(1,abs(X))))))))
+Goto ED
+Lbl EB
 Output(R,θ,"0")
 θ+1→θ
-Lbl DB
+Lbl ED
 If Z=1
 Goto BT
 If Z=2
@@ -65,30 +73,70 @@ Goto C1
 If Z=10
 Goto C2
 If Z=11
-Goto C9
+Goto CE
 If Z=12
-Goto CA
+Goto CF
 If Z=13
-Goto CB
-If Z=14
-Goto CC
-If Z=15
 Goto CG
-If Z=16
+If Z=14
 Goto CH
-If Z=17
+If Z=15
 Goto CI
+If Z=16
+Goto CJ
+If Z=17
+Goto CK
 If Z=18
-Goto CN
+Goto CL
 If Z=19
-Goto CO
+Goto CM
 If Z=20
-Goto CP
+Goto CN
 If Z=21
-Goto CR
+Goto CO
 If Z=22
-Goto D7
-Lbl D8
+Goto CP
+If Z=23
+Goto CQ
+If Z=24
+Goto CR
+If Z=25
+Goto CS
+If Z=26
+Goto CT
+If Z=27
+Goto CV
+If Z=28
+Goto CY
+If Z=29
+Goto D1
+If Z=30
+Goto D3
+If Z=31
+Goto DB
+If Z=32
+Goto DC
+If Z=33
+Goto DD
+If Z=34
+Goto DE
+If Z=35
+Goto DI
+If Z=36
+Goto DJ
+If Z=37
+Goto DK
+If Z=38
+Goto DP
+If Z=39
+Goto DQ
+If Z=40
+Goto DR
+If Z=41
+Goto DT
+If Z=42
+Goto E9
+Lbl EA
 ClrHome
 Output(1,1,"+--------------+")
 Output(2,1,"|  SAT TOOLKIT |")
@@ -100,7 +148,7 @@ Pause
 Lbl A0
 Lbl A1
 Lbl A9
-Menu("SAT TRIG CENTER","RIGHT TRIANGLE",A2,"SPECIAL TRI",A3,"UNIT CIRCLE",A4,"TRIG TOOLS",A5,"LEARN TRIG",A6,"TRIG QUIZ",A7,"QUIT",A8)
+Menu("SAT TRIG CENTER","ANY TRIANGLE",A2,"RIGHT TRIANGLE",A3,"UNIT CIRCLE",A4,"TRIG TOOLS",A5,"LEARN TRIG",A6,"TRIG QUIZ",A7,"QUIT",A8)
 Lbl BL
 1→P
 Repeat K=45 or P>1
@@ -134,7 +182,7 @@ End
 Output(7,1,"KEEP PRACTICING!")
 Pause
 Goto A1
-Lbl A2
+Lbl A3
 ClrHome
 Disp "RIGHT TRIANGLE","LEGS A,B HYP C","0 = UNKNOWN"
 Input "A=",A
@@ -267,19 +315,475 @@ Lbl BR
 Disp "NEED 2 SIDES, OR","1 SIDE + ANGLE A"
 Pause
 Goto A9
-Lbl A3
-Menu("SPECIAL RIGHT","30-60-90",C3,"45-45-90",C4,"BACK",A9)
-Lbl C3
-Menu("30-60-90 KNOWN:","SHORT LEG  X",C5,"LONG LEG X√(3)",C6,"HYPOTENUSE 2X",C7,"BACK",A3)
-Lbl C5
+Lbl A2
+ClrHome
+Disp "ENTER KNOWN, 0=?"
+Input "SIDE A=",A
+Input "SIDE B=",B
+Input "SIDE C=",C
+Input "ANGLE A°=",D
+Input "ANGLE B°=",E
+Input "ANGLE C°=",F
+Input "AREA=",G
+{abs(A),abs(B),abs(C),D,E,F,0,0,0,0,0,0}→L₆
+For(I,4,6)
+If L₆(I)≤0 or L₆(I)≥180:0→L₆(I)
+End
+abs(G)→G
+0→V
+(L₆(1)>0)+(L₆(2)>0)+(L₆(3)>0)→S
+(L₆(4)>0)+(L₆(5)>0)+(L₆(6)>0)→P
+If P=2
+Then
+180-L₆(4)-L₆(5)-L₆(6)→M
+For(I,4,6)
+If not(L₆(I)):M→L₆(I)
+End
+3→P
+If M≤0:~1→P
+End
+If P=3 and abs(L₆(4)+L₆(5)+L₆(6)-180)>.000001:~1→P
+If P<0
+Goto C3
+If S=3
+Goto C4
+If P=3
+Goto C5
+If S=2 and P=1
+Goto C6
+If S=2 and not(P) and G>0
+Goto C7
+If S=1 and P=1 and G>0
+Goto C8
+Goto C9
+Lbl C4
+L₆(1)→A
+L₆(2)→B
+L₆(3)→C
+L₆(4)→D
+L₆(5)→E
+L₆(6)→F
+If A+B≤C or A+C≤B or B+C≤A
+Goto CA
+45/tan⁻¹(1)→M
+Mcos⁻¹(max(~1,min(1,(B²+C²-A²)/(2BC))))→D
+Mcos⁻¹(max(~1,min(1,(A²+C²-B²)/(2AC))))→E
+180-D-E→F
+A→L₆(1)
+B→L₆(2)
+C→L₆(3)
+D→L₆(4)
+E→L₆(5)
+F→L₆(6)
 1→N
-Goto C8
+Goto CB
+Lbl C5
+L₆(1)→A
+L₆(2)→B
+L₆(3)→C
+L₆(4)→D
+L₆(5)→E
+L₆(6)→F
+If S
+Then
+If C:C/sin(F°)→M
+If B:B/sin(E°)→M
+If A:A/sin(D°)→M
+Else
+If G
+Then
+√(2G/(sin(D°)sin(E°)sin(F°)))→M
+Else
+1/min(sin(D°),min(sin(E°),sin(F°)))→M
+1→V
+End
+End
+Msin(D°)→A
+Msin(E°)→B
+Msin(F°)→C
+A→L₆(1)
+B→L₆(2)
+C→L₆(3)
+D→L₆(4)
+E→L₆(5)
+F→L₆(6)
+1→N
+Goto CB
 Lbl C6
+For(I,1,3)
+If L₆(I+3):I→P
+End
+If L₆(P)
+Goto CC
+L₆(1)+L₆(2)+L₆(3)-L₆(P)→M
+L₆(1)²+L₆(2)²+L₆(3)²-L₆(P)²→N
+√(max(0,N-(M²-N)cos(L₆(P+3)°)))→L₆(P)
+L₆(1)→A
+L₆(2)→B
+L₆(3)→C
+L₆(4)→D
+L₆(5)→E
+L₆(6)→F
+45/tan⁻¹(1)→M
+Mcos⁻¹(max(~1,min(1,(B²+C²-A²)/(2BC))))→D
+Mcos⁻¹(max(~1,min(1,(A²+C²-B²)/(2AC))))→E
+180-D-E→F
+A→L₆(1)
+B→L₆(2)
+C→L₆(3)
+D→L₆(4)
+E→L₆(5)
+F→L₆(6)
+1→N
+Goto CB
+Lbl CC
+For(I,1,3)
+If I≠P and L₆(I)>0:I→H
+End
+6-P-H→T
+L₆(H)sin(L₆(P+3)°)/L₆(P)→M
+If M>1.000000001
+Goto CA
+If M>.999999999:1→M
+45/tan⁻¹(1)→F
+Fsin⁻¹(M)→D
+180-D→E
+180-L₆(P+3)-D→C
+If C≤.000001
+Goto CA
+D→L₆(H+3)
+C→L₆(T+3)
+L₆(P)sin(C°)/sin(L₆(P+3)°)→L₆(T)
+1→N
+If L₆(P+3)+E<179.999999 and E-D>.000001
+Then
+For(I,1,6):L₆(I)→L₆(I+6):End
+E→L₆(H+9)
+180-L₆(P+3)-E→C
+C→L₆(T+9)
+L₆(P)sin(C°)/sin(L₆(P+3)°)→L₆(T+6)
 2→N
-Goto C8
+End
+Goto CB
 Lbl C7
-3→N
+For(I,1,3)
+If not(L₆(I)):I→P
+End
+L₆(1)+L₆(2)+L₆(3)→M
+L₆(1)²+L₆(2)²+L₆(3)²→N
+4G/(M²-N)→M
+If M>1.000000001
+Goto CA
+If M>.999999999:1→M
+45/tan⁻¹(1)→F
+Fsin⁻¹(min(M,1))→S
+1→H
+If abs(S-90)>.000001
+Then
+180-S→L₆(P+3)
+L₆(1)+L₆(2)+L₆(3)-L₆(P)→M
+L₆(1)²+L₆(2)²+L₆(3)²-L₆(P)²→N
+√(max(0,N-(M²-N)cos(L₆(P+3)°)))→L₆(P)
+L₆(1)→A
+L₆(2)→B
+L₆(3)→C
+L₆(4)→D
+L₆(5)→E
+L₆(6)→F
+45/tan⁻¹(1)→M
+Mcos⁻¹(max(~1,min(1,(B²+C²-A²)/(2BC))))→D
+Mcos⁻¹(max(~1,min(1,(A²+C²-B²)/(2AC))))→E
+180-D-E→F
+A→L₆(7)
+B→L₆(8)
+C→L₆(9)
+D→L₆(10)
+E→L₆(11)
+F→L₆(12)
+0→L₆(P)
+2→H
+End
+S→L₆(P+3)
+L₆(1)+L₆(2)+L₆(3)-L₆(P)→M
+L₆(1)²+L₆(2)²+L₆(3)²-L₆(P)²→N
+√(max(0,N-(M²-N)cos(L₆(P+3)°)))→L₆(P)
+L₆(1)→A
+L₆(2)→B
+L₆(3)→C
+L₆(4)→D
+L₆(5)→E
+L₆(6)→F
+45/tan⁻¹(1)→M
+Mcos⁻¹(max(~1,min(1,(B²+C²-A²)/(2BC))))→D
+Mcos⁻¹(max(~1,min(1,(A²+C²-B²)/(2AC))))→E
+180-D-E→F
+A→L₆(1)
+B→L₆(2)
+C→L₆(3)
+D→L₆(4)
+E→L₆(5)
+F→L₆(6)
+H→N
+Goto CB
 Lbl C8
+For(I,1,3)
+If L₆(I):I→H
+If L₆(I+3):I→P
+End
+If H=P
+Goto C9
+6-H-P→T
+2G/(L₆(H)sin(L₆(P+3)°))→L₆(T)
+L₆(1)+L₆(2)+L₆(3)-L₆(P)→M
+L₆(1)²+L₆(2)²+L₆(3)²-L₆(P)²→N
+√(max(0,N-(M²-N)cos(L₆(P+3)°)))→L₆(P)
+L₆(1)→A
+L₆(2)→B
+L₆(3)→C
+L₆(4)→D
+L₆(5)→E
+L₆(6)→F
+45/tan⁻¹(1)→M
+Mcos⁻¹(max(~1,min(1,(B²+C²-A²)/(2BC))))→D
+Mcos⁻¹(max(~1,min(1,(A²+C²-B²)/(2AC))))→E
+180-D-E→F
+A→L₆(1)
+B→L₆(2)
+C→L₆(3)
+D→L₆(4)
+E→L₆(5)
+F→L₆(6)
+1→N
+Goto CB
+Lbl C3
+ClrHome
+Disp "ANGLES MUST ADD","UP TO 180°"
+Pause
+Goto A9
+Lbl CA
+ClrHome
+Disp "NO TRIANGLE FITS","THIS INFO","","(CHECK SIDES:","A+B MUST BE > C)"
+Pause
+Goto A9
+Lbl C9
+ClrHome
+Disp "NOT ENOUGH INFO","GIVE 3 THINGS:","3 SIDES, OR","2 SIDES+1 ANGLE,","OR 2 ANGLES AND","A SIDE OR AREA.","(2 SIDES + AREA","ALSO WORKS)"
+Pause
+Goto A9
+Lbl CB
+1→H
+Lbl CD
+L₆(6H-5)→A
+L₆(6H-4)→B
+L₆(6H-3)→C
+L₆(6H-2)→D
+L₆(6H-1)→E
+L₆(6H)→F
+ABsin(F°)/2→G
+ClrHome
+If N=2:Then:Output(1,1,"SOLUTION   OF 2"):Output(1,10,H):Else:Output(1,1,"TRIANGLE"):End
+If V:Output(1,1,"SIDES = RATIOS")
+Output(2,1,"A=")
+A→X
+2→R
+3→θ
+11→Z
+Goto BS
+Lbl CE
+Output(3,1,"B=")
+B→X
+3→R
+3→θ
+12→Z
+Goto BS
+Lbl CF
+Output(4,1,"C=")
+C→X
+4→R
+3→θ
+13→Z
+Goto BS
+Lbl CG
+Output(5,1,"ANGLE A=")
+Output(5,9,round(D,4))
+Output(6,1,"ANGLE B=")
+Output(6,9,round(E,4))
+Output(7,1,"ANGLE C=")
+Output(7,9,round(F,4))
+max(D,max(E,F))→M
+If abs(M-90)<.000001:Output(8,1,"RIGHT")
+If M>90.000001:Output(8,1,"OBTUSE")
+If M<89.999999:Output(8,1,"ACUTE")
+(abs(A-B)<.000001max(A,B))+(abs(B-C)<.000001max(B,C))+(abs(A-C)<.000001max(A,C))→M
+If M=3:Output(8,8,"EQUILAT.")
+If M=1:Output(8,8,"ISOSCELES")
+If not(M):Output(8,8,"SCALENE")
+Pause
+ClrHome
+Output(1,1,"AREA=")
+G→X
+1→R
+6→θ
+14→Z
+Goto BS
+Lbl CH
+Output(2,1,"PERIM=")
+A+B+C→X
+2→R
+7→θ
+15→Z
+Goto BS
+Lbl CI
+Output(3,1,"H(A)=")
+2G/A→X
+3→R
+6→θ
+16→Z
+Goto BS
+Lbl CJ
+Output(4,1,"H(B)=")
+2G/B→X
+4→R
+6→θ
+17→Z
+Goto BS
+Lbl CK
+Output(5,1,"H(C)=")
+2G/C→X
+5→R
+6→θ
+18→Z
+Goto BS
+Lbl CL
+Output(6,1,"CIRCUMR=")
+A/(2sin(D°))→X
+6→R
+9→θ
+19→Z
+Goto BS
+Lbl CM
+Output(7,1,"INRADIUS=")
+2G/(A+B+C)→X
+7→R
+10→θ
+20→Z
+Goto BS
+Lbl CN
+Output(8,1,"H=HEIGHT TO SIDE")
+Pause
+ClrHome
+Output(1,1,"SIN A=")
+sin(D°)→X
+1→R
+7→θ
+21→Z
+Goto BS
+Lbl CO
+Output(2,1,"SIN B=")
+sin(E°)→X
+2→R
+7→θ
+22→Z
+Goto BS
+Lbl CP
+Output(3,1,"SIN C=")
+sin(F°)→X
+3→R
+7→θ
+23→Z
+Goto BS
+Lbl CQ
+Output(4,1,"COS A=")
+cos(D°)→X
+4→R
+7→θ
+24→Z
+Goto BS
+Lbl CR
+Output(5,1,"COS B=")
+cos(E°)→X
+5→R
+7→θ
+25→Z
+Goto BS
+Lbl CS
+Output(6,1,"COS C=")
+cos(F°)→X
+6→R
+7→θ
+26→Z
+Goto BS
+Lbl CT
+Output(8,1,"ENTER: TAN")
+Pause
+ClrHome
+Output(1,1,"TAN A=")
+If abs(cos(D°))<.000000001
+Goto CU
+tan(D°)→X
+1→R
+7→θ
+27→Z
+Goto BS
+Lbl CV
+Goto CW
+Lbl CU
+Output(1,7,"UNDEFINED")
+Lbl CW
+Output(2,1,"TAN B=")
+If abs(cos(E°))<.000000001
+Goto CX
+tan(E°)→X
+2→R
+7→θ
+28→Z
+Goto BS
+Lbl CY
+Goto CZ
+Lbl CX
+Output(2,7,"UNDEFINED")
+Lbl CZ
+Output(3,1,"TAN C=")
+If abs(cos(F°))<.000000001
+Goto D0
+tan(F°)→X
+3→R
+7→θ
+29→Z
+Goto BS
+Lbl D1
+Goto D2
+Lbl D0
+Output(3,7,"UNDEFINED")
+Lbl D2
+Output(5,1,"A/SINA = B/SINB")
+Output(6,1," = C/SINC")
+Output(7,1," =")
+A/sin(D°)→X
+7→R
+4→θ
+30→Z
+Goto BS
+Lbl D3
+If H<N:Output(8,1,"ENTER: NEXT SOL.")
+Pause
+H+1→H
+If H≤N
+Goto CD
+Goto A9
+Lbl D6
+Menu("SPECIAL RIGHT","30-60-90",D4,"45-45-90",D5,"BACK",A5)
+Lbl D4
+Menu("30-60-90 KNOWN:","SHORT LEG  X",D7,"LONG LEG X√(3)",D8,"HYPOTENUSE 2X",D9,"BACK",D6)
+Lbl D7
+1→N
+Goto DA
+Lbl D8
+2→N
+Goto DA
+Lbl D9
+3→N
+Lbl DA
 ClrHome
 Disp "30-60-90","(4√(3) IS OK)"
 Input "LENGTH=",V
@@ -292,44 +796,44 @@ Output(2,1,"SHORT=")
 P→X
 2→R
 7→θ
-11→Z
+31→Z
 Goto BS
-Lbl C9
+Lbl DB
 Output(3,1,"LONG =")
 P√(3)→X
 3→R
 7→θ
-12→Z
+32→Z
 Goto BS
-Lbl CA
+Lbl DC
 Output(4,1,"HYP  =")
 2P→X
 4→R
 7→θ
-13→Z
+33→Z
 Goto BS
-Lbl CB
+Lbl DD
 Output(5,1,"AREA =")
 P²√(3)/2→X
 5→R
 7→θ
-14→Z
+34→Z
 Goto BS
-Lbl CC
+Lbl DE
 Output(6,1,"PERIM=")
 Output(6,7,round(P(3+√(3)),4))
 Output(7,1,"SHORT IS OPP 30°")
 Output(8,1,"LONG IS OPP 60°")
 Pause
-Goto C3
-Lbl C4
-Menu("45-45-90 KNOWN:","LEG  X",CD,"HYP  X√(2)",CE,"BACK",A3)
-Lbl CD
+Goto D4
+Lbl D5
+Menu("45-45-90 KNOWN:","LEG  X",DF,"HYP  X√(2)",DG,"BACK",D6)
+Lbl DF
 1→N
-Goto CF
-Lbl CE
+Goto DH
+Lbl DG
 2→N
-Lbl CF
+Lbl DH
 ClrHome
 Disp "45-45-90","(4√(2) IS OK)"
 Input "LENGTH=",V
@@ -341,46 +845,48 @@ Output(2,1,"LEGS =")
 P→X
 2→R
 7→θ
-15→Z
+35→Z
 Goto BS
-Lbl CG
+Lbl DI
 Output(3,1,"HYP  =")
 P√(2)→X
 3→R
 7→θ
-16→Z
+36→Z
 Goto BS
-Lbl CH
+Lbl DJ
 Output(4,1,"AREA =")
 P²/2→X
 4→R
 7→θ
-17→Z
+37→Z
 Goto BS
-Lbl CI
+Lbl DK
 Output(5,1,"PERIM=")
 Output(5,7,round(P(2+√(2)),4))
 Output(7,1,"ISOSCELES RIGHT")
 Output(8,1,"TRIANGLE")
 Pause
-Goto C4
+Goto D5
 Lbl A4
-Menu("UNIT CIRCLE","ANGLE IN DEG",CJ,"ANGLE IN RAD",CK,"VALUES TABLE",CL,"BACK",A9)
-Lbl CJ
+Menu("UNIT CIRCLE","ANGLE IN DEG",DL,"ANGLE IN RAD",DM,"VALUES TABLE",DN,"BACK",A9)
+Lbl DL
 ClrHome
 Disp "UNIT CIRCLE"
 Input "ANGLE°=",D
-Goto CM
-Lbl CK
+Goto DO
+Lbl DM
 ClrHome
 Disp "UNIT CIRCLE","(π KEY IS OK)"
 Input "ANGLE RAD=",V
 180V/π→D
-Lbl CM
+Lbl DO
 round(D-360int(D/360),9)→E
 If E≥360:E-360→E
-round(sin(E°),9)→S
-round(cos(E°),9)→C
+sin(E°)→S
+cos(E°)→C
+S(abs(S)>.000000001)→S
+C(abs(C)>.000000001)→C
 E→G
 If E>90 and E≤180:180-E→G
 If E>180 and E≤270:E-180→G
@@ -392,9 +898,9 @@ Output(2,1,"RAD/π=")
 E/180→X
 2→R
 7→θ
-18→Z
+38→Z
 Goto BS
-Lbl CN
+Lbl DP
 If fPart(E/90):Then:Output(3,1,"QUADRANT"):Output(3,10,1+int(E/90)):Else:Output(3,1,"ON AN AXIS"):End
 Output(4,1,"REF ANGLE=")
 Output(4,11,round(G,4))
@@ -402,29 +908,29 @@ Output(5,1,"SIN=")
 S→X
 5→R
 5→θ
-19→Z
+39→Z
 Goto BS
-Lbl CO
+Lbl DQ
 Output(6,1,"COS=")
 C→X
 6→R
 5→θ
-20→Z
+40→Z
 Goto BS
-Lbl CP
+Lbl DR
 Output(7,1,"TAN=")
 If not(C)
-Goto CQ
+Goto DS
 S/C→X
 7→R
 5→θ
-21→Z
+41→Z
 Goto BS
-Lbl CR
-Goto CS
-Lbl CQ
+Lbl DT
+Goto DU
+Lbl DS
 Output(7,5,"UNDEFINED")
-Lbl CS
+Lbl DU
 Output(8,1,"SIN")
 Output(8,4,sub("0+-",1+(S>0)+2(S<0),1))
 Output(8,6,"COS")
@@ -434,8 +940,8 @@ Output(8,14,sub("0+-?",1+(SC>0)+2(SC<0)+3not(C),1))
 Pause
 Goto A4
 Lbl A5
-Menu("TRIG TOOLS","COFUNCTION EQN",CT,"LAW OF SINES",CU,"LAW OF COSINES",CV,"SIMILAR TRI",CW,"BACK",A9)
-Lbl CT
+Menu("TRIG TOOLS","SPECIAL TRI",D6,"COFUNCTION EQN",DV,"LAW OF SINES",DW,"LAW OF COSINES",DX,"SIMILAR TRI",DY,"BACK",A9)
+Lbl DV
 ClrHome
 Disp "SIN(AX+B)°","=COS(CX+D)°"
 Input "A=",A
@@ -458,7 +964,7 @@ Disp "A+C CAN'T BE 0"
 End
 Pause
 Goto A5
-Lbl CU
+Lbl DW
 ClrHome
 Disp "LAW OF SINES","2 ANGLES + SIDE","A (OPPOSITE A)"
 Input "ANGLE A°=",A
@@ -467,7 +973,7 @@ Input "SIDE A=",P
 ClrHome
 180-A-B→C
 If A≤0 or B≤0 or C≤0 or P≤0
-Goto CX
+Goto DZ
 Psin(B°)/sin(A°)→M
 Psin(C°)/sin(A°)→N
 Disp "ANGLE C (°)"
@@ -480,13 +986,13 @@ Disp "AREA"
 Disp round(PMsin(C°)/2,6)
 Pause
 Goto A5
-Lbl CX
+Lbl DZ
 Disp "ANGLES MUST SUM","< 180, SIDE > 0"
 Pause
 Goto A5
-Lbl CV
-Menu("LAW OF COSINES","2 SIDES+ANGLE",CY,"3 SIDES",CZ,"BACK",A5)
-Lbl CY
+Lbl DX
+Menu("LAW OF COSINES","2 SIDES+ANGLE",E0,"3 SIDES",E1,"BACK",A5)
+Lbl E0
 ClrHome
 Disp "SIDES A, B AND","ANGLE C BETWEEN"
 Input "SIDE A=",A
@@ -494,7 +1000,7 @@ Input "SIDE B=",B
 Input "ANGLE C°=",D
 ClrHome
 If A≤0 or B≤0 or D≤0 or D≥180
-Goto D0
+Goto E2
 √(A²+B²-2ABcos(D°))→C
 45/tan⁻¹(1)→F
 Fcos⁻¹((B²+C²-A²)/(2BC))→E
@@ -507,8 +1013,8 @@ Disp round(180-D-E,4)
 Disp "AREA"
 Disp round(ABsin(D°)/2,6)
 Pause
-Goto CV
-Lbl CZ
+Goto DX
+Lbl E1
 ClrHome
 Disp "3 SIDES A, B, C"
 Input "A=",A
@@ -516,7 +1022,7 @@ Input "B=",B
 Input "C=",C
 ClrHome
 If A≤0 or B≤0 or C≤0 or A+B≤C or A+C≤B or B+C≤A
-Goto D0
+Goto E2
 45/tan⁻¹(1)→F
 Fcos⁻¹((B²+C²-A²)/(2BC))→D
 Fcos⁻¹((A²+C²-B²)/(2AC))→E
@@ -530,12 +1036,12 @@ Disp round(180-D-E,4)
 Disp "AREA (HERON)"
 Disp round(√(S(S-A)(S-B)(S-C)),6)
 Pause
-Goto CV
-Lbl D0
+Goto DX
+Lbl E2
 Disp "NOT A VALID","TRIANGLE"
 Pause
-Goto CV
-Lbl CW
+Goto DX
+Lbl DY
 ClrHome
 Disp "SIMILAR TRI'S","MATCHING SIDES:"
 Input "SMALL SIDE=",A
@@ -559,8 +1065,8 @@ End
 Pause
 Goto A5
 Lbl A6
-Menu("LEARN TRIG","SOH CAH TOA",D1,"SPECIAL TRI",D2,"UNIT CIRCLE",CL,"RADIANS/ARCS",D3,"IDENTITIES",D4,"TRAPS + TIPS",D5,"BACK",A9)
-Lbl D1
+Menu("LEARN TRIG","SOH CAH TOA",E3,"SPECIAL TRI",E4,"UNIT CIRCLE",DN,"RADIANS/ARCS",E5,"IDENTITIES",E6,"TRAPS + TIPS",E7,"BACK",A9)
+Lbl E3
 1→P
 Repeat K=45 or P>6
 ClrHome
@@ -628,7 +1134,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A6
-Lbl D2
+Lbl E4
 1→P
 Repeat K=45 or P>6
 ClrHome
@@ -696,7 +1202,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A6
-Lbl CL
+Lbl DN
 1→P
 Repeat K=45 or P>7
 ClrHome
@@ -772,7 +1278,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A4
-Lbl D3
+Lbl E5
 1→P
 Repeat K=45 or P>6
 ClrHome
@@ -838,7 +1344,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A6
-Lbl D4
+Lbl E6
 1→P
 Repeat K=45 or P>5
 ClrHome
@@ -896,7 +1402,7 @@ End
 P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
 End
 Goto A6
-Lbl D5
+Lbl E7
 1→P
 Repeat K=45 or P>6
 ClrHome
@@ -967,7 +1473,7 @@ Goto A6
 Lbl A7
 0→L
 0→T
-Lbl D6
+Lbl E8
 randInt(1,10)→Z
 ClrHome
 Disp "","","","","",""
@@ -1088,9 +1594,9 @@ randInt(0,2)→N
 randInt(0,3)→H
 (H=0)B+(H=1)(180-B)+(H=2)(180+B)+(H=3)(360-B)→D
 randInt(1,3)→V
-If V=1:round(sin(D°),9)→X
-If V=2:round(cos(D°),9)→X
-If V=3:round(tan(D°),9)→X
+If V=1:sin(D°)→X
+If V=2:cos(D°)→X
+If V=3:tan(D°)→X
 Output(2,1,"EXACT VALUE OF")
 1→θ
 Output(3,θ,D)
@@ -1284,9 +1790,9 @@ Output(3,1,"ANSWER:")
 X→X
 3→R
 9→θ
-22→Z
+42→Z
 Goto BS
-Lbl D7
+Lbl E9
 Output(5,1,"SCORE:")
 Output(5,8,L)
 Output(5,8+(1+(L<0)+int(log(abs(L)+not(L)))),"/")
@@ -1298,7 +1804,7 @@ Repeat K=45 or K=105
 getKey→K
 End
 If K=105
-Goto D6
+Goto E8
 Goto BO
 Lbl A8
 DelVar L₆

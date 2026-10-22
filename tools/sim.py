@@ -304,6 +304,12 @@ class Machine:
         if k == "list":
             if t not in self.lists:
                 raise TIError("UNDEFINED list")
+            if self.peek() == ("op", "("):  # element access L₆(n)
+                self.take()
+                idx = self.p_or()
+                if self.peek() == ("op", ")"):
+                    self.take()
+                return self.list_get(t, idx)
             return list(self.lists[t])
         if t in ("pi", "π"):
             return math.pi
@@ -388,6 +394,24 @@ class Machine:
             lo, hi = int(a[0]), int(a[1])
             return float(self.rng.randint(lo, hi))
         raise TIError(f"unknown func {f}")
+
+    def list_get(self, name, idx):
+        i = int(idx)
+        if idx != i or not 1 <= i <= len(self.lists[name]):
+            raise TIError(f"INVALID DIM {name}({idx})")
+        return self.lists[name][i - 1]
+
+    def list_set(self, name, idx, v):
+        if isinstance(v, list):
+            raise TIError("DATA TYPE")
+        lst = self.lists.setdefault(name, [])
+        i = int(idx)
+        if idx != i or not 1 <= i <= len(lst) + 1:
+            raise TIError(f"INVALID DIM {name}({idx})")
+        if i == len(lst) + 1:
+            lst.append(v)
+        else:
+            lst[i - 1] = v
 
     def truth(self, s):
         v, _ = self.eval(s)
@@ -530,7 +554,10 @@ class Machine:
         if "→" in s:
             expr, var = s.rsplit("→", 1)
             v, _ = self.eval(expr)
-            if var == "L₆":
+            if var.startswith("L₆("):
+                idx, _ = self.eval(var[3:-1] if var.endswith(")") else var[3:])
+                self.list_set("L₆", idx, v)
+            elif var == "L₆":
                 self.lists[var] = v
             else:
                 if isinstance(v, list):

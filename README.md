@@ -32,7 +32,7 @@
 | | |
 |---|---|
 | 🧮 **Math Solvers** | Quadratics with **exact radical roots** like `(2+√(10))/2`, 2×2 systems, lines from two points, exponential growth, six percent tools, circles from general form, arcs and sectors, statistics, a missing-value finder, and degrees ↔ radians |
-| 📐 **Trig Center** | Right and special triangle solvers, a unit circle explorer, cofunction equations, the laws of sines and cosines, similar triangles, 6 lessons, and a 10-type trig quiz. Every answer is in exact SAT form, like `2√(5)/5` |
+| 📐 **Trig Center** | An **any-triangle solver** (enter any sides, angles or area), right and special triangle solvers, a unit circle explorer, cofunction equations, the laws of sines and cosines, similar triangles, 6 lessons, and a 10-type trig quiz. Every answer is in exact SAT form, like `2√(5)/5` |
 | 📏 **Math Formulas** | 11 topics in about 35 pages, from linear equations to probability |
 | 📖 **Reading & Writing Guide** | Punctuation, grammar, transitions, student-notes questions, reading question types, R&W pacing |
 | ✏️ **Practice Quiz** | Endless random math (10 types) and trig (10 types) questions, plus 18 grammar questions with explanations, all with score tracking |
@@ -42,14 +42,38 @@ Answers show as **fractions** wherever possible (`4/3`, not `1.333333333`), and 
 
 ## Trig Center
 
-Trig is where most students lose points on SAT Math, so it gets its own section. Every trig answer goes through an **exact-value engine**: it finds the simplest `p√(q)/d` form of any value whose square is a fraction, which covers every SAT triangle and unit-circle value. For anything else it falls back to a decimal.
+Trig is where most students lose points on SAT Math, so it gets its own section. Every trig answer goes through an **exact-value engine**: it finds the simplest `p√(q)/d` form of any value whose square is a fraction with a denominator up to 9999, which covers every SAT triangle and unit-circle value. For anything else it falls back to a decimal.
+
+### Any triangle: enter what you know, get everything back
+
+Fill in whatever you know about **any** triangle (sides a, b, c, angles A, B, C, and the area), and leave the rest as 0. The solver works out which case you gave it and solves the triangle:
+
+| You know | Case |
+|---|---|
+| 3 sides | SSS |
+| 2 sides + the angle between them | SAS |
+| 2 angles + any side | ASA / AAS |
+| 2 sides + an angle that isn't between them | SSA. When **two triangles** fit (the ambiguous case), it shows both |
+| 3 angles only | Shape only: sides shown as ratios, smallest = 1 |
+| 2 or 3 angles + the area | Scaled to that area |
+| 2 sides + the area | The angle between them can be θ or 180°−θ, so it shows both triangles |
+| 1 side + the angle next to it + the area | Solved via the other side |
+
+You get back exact sides, all three angles, the triangle type (acute/right/obtuse, scalene/isosceles/equilateral), area, perimeter, all three heights, the circumradius and inradius, and sin, cos and tan of every angle, plus the law-of-sines ratio. If the information can't make a triangle, it says why: the angles don't add to 180°, the sides fail `a+b>c`, or there isn't enough info.
+
+<p align="center"><img src="docs/images/sheet-any-triangle.png" alt="Any triangle: 13-14-15 input, sides and angles, area heights and radii, exact sines and cosines" width="560"></p>
+
+<p align="center"><img src="docs/images/sheet-any-triangle-ssa.png" alt="Ambiguous SSA case: input, solution 1 of 2, solution 2 of 2, measures" width="560"></p>
+
+### All trig tools
 
 <p align="center"><img src="docs/images/sheet-trig-right.png" alt="Trig Center menu, right triangle input, sides with exact radicals, all six trig ratios" width="560"></p>
 
 | Tool | What it does |
 |---|---|
-| **Right triangle** | Enter **any two sides, or one side and one angle**. You get every side in exact form, both angles, area, perimeter, sin/cos/tan of *both* acute angles, and notes that flag 30-60-90, 45-45-90 and Pythagorean triples |
-| **Special triangles** | 30-60-90 or 45-45-90: give any one side, even as `4√(3)`, and get all three sides, the area and the perimeter in exact form |
+| **Any triangle** | Any combination of sides, angles and area, as described above |
+| **Right triangle** | A quicker version for right triangles: enter **any two sides, or one side and one angle**. You get every side in exact form, both angles, area, perimeter, sin/cos/tan of *both* acute angles, and notes that flag 30-60-90, 45-45-90 and Pythagorean triples |
+| **Special triangles** (in Trig tools) | 30-60-90 or 45-45-90: give any one side, even as `4√(3)`, and get all three sides, the area and the perimeter in exact form |
 | **Unit circle** | Enter any angle in degrees or radians (negative or over 360° works too). You get the coterminal angle, radians in π units, quadrant, reference angle, exact sin/cos/tan, and the sign of each |
 | **Cofunction equation** | The classic `sin(ax+b)° = cos(cx+d)°`: solves for x and shows both angles |
 | **Law of sines / cosines** | Two angles and a side, two sides and the included angle, or all three sides. You get the missing sides, angles and area (Heron's formula for three sides) |
@@ -99,16 +123,16 @@ Every topic is a set of pages you flip with the arrow keys.
 
 | Your calculator | How to tell | Download |
 |---|---|---|
-| **TI-84 Plus CE** | Color screen, rechargeable battery | `SAT.8xp` (51 KB): everything in one program |
+| **TI-84 Plus CE** | Color screen, rechargeable battery | `SAT.8xp` (56 KB): everything in one program |
 | **TI-84 Plus / Silver Edition** | Gray screen, AAA batteries | `SATMATH.8xp`, `SATTRIG.8xp`, `SATRW.8xp` |
 
 The older TI-84 Plus only has about 24 KB of RAM, so its version is split into three programs with uppercase text, which takes half the space:
 
 - **SATMATH** (17 KB): math solvers, formulas, math quiz, strategy
-- **SATTRIG** (16 KB): the full Trig Center, with its menu as the main menu
+- **SATTRIG** (21 KB): the full Trig Center, with its menu as the main menu
 - **SATRW** (12 KB): Reading & Writing guide, grammar quiz, strategy
 
-Only one fits in RAM at a time, so keep the others **archived**. Press `2nd` `+` (MEM) → `2:Mem Mgmt/Del` → `7:Prgm`, then press `ENTER` on a program to archive or unarchive it (a `*` means archived). Older models can't run archived programs.
+Only one fits in RAM at a time, so keep the others **archived**. SATTRIG is the largest, so archive or delete other programs and big lists first if you get `ERR:MEMORY`. Press `2nd` `+` (MEM) → `2:Mem Mgmt/Del` → `7:Prgm`, then press `ENTER` on a program to archive or unarchive it (a `*` means archived). Older models can't run archived programs.
 
 ## Install
 
@@ -170,9 +194,9 @@ python build_sat.py
 That regenerates all four programs:
 
 ```
-SAT       3326 lines  50921 bytes
+SAT       3832 lines  56165 bytes
 SATMATH   1332 lines  16974 bytes
-SATTRIG   1307 lines  15995 bytes
+SATTRIG   1813 lines  20935 bytes
 SATRW      842 lines  11822 bytes
 ```
 
@@ -197,7 +221,7 @@ python tools/test_all.py
 ```
 
 - `test_solvers.py` runs 36 math solver cases with known answers, including edge cases (a = 0, complex roots, vertical lines, invalid input).
-- `test_trig.py` runs 27 Trig Center cases and checks the exact text on screen, for example that legs 1 and 2 give `cos A=2√(5)/5` and that 150° gives `cos=-√(3)/2`.
+- `test_trig.py` runs 48 Trig Center cases and checks the exact text on screen. For example, legs 1 and 2 give `cos A=2√(5)/5`, 150° gives `cos=-√(3)/2`, a 13-14-15 triangle gives `sin B=56/65`, and SSA with a=6, b=10, A=30° gives two solutions. It also runs 400 random fuzz inputs through the any-triangle solver.
 - `test_all.py` flips through every reference page in all four builds, plays all three quizzes (checking the final score and that every question type appears), and runs 600 random fuzz walks with odd inputs (0, negatives, fractions, π) in both angle modes, failing on any crash or screen overflow.
 
 To regenerate the README images and demo GIF (needs Pillow, and uses the Windows Consolas font):

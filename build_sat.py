@@ -197,7 +197,7 @@ def seg_row(row: int, segs: list) -> None:
 #   in:  X value, R row, θ start column, Z return id
 #   out: prints X as  [-]p√(q)/d  (or a plain fraction / integer), θ advances
 #   uses: I J K O Q U W Y as scratch
-# Works for any value whose square is a fraction with denominator <= 999,
+# Works for any value whose square is a fraction with denominator <= 9999,
 # which covers every SAT triangle and unit-circle value. Otherwise: decimal.
 # ---------------------------------------------------------------------
 _exact_returns: list[str] = []
@@ -226,13 +226,13 @@ Goto @ST0
 Lbl @XA
 If abs(X)<.000000001
 Goto @XZ
-round(X²,9)→Y
+X²→Y
 Y→Q
 0→I
 1→J
 1→U
 0→O
-Repeat abs(J/O-Y)<.000000002max(1,Y) or O>999
+Repeat abs(J/O-Y)<.00000000001max(1,Y) or O>9999
 int(Q)→W
 WJ+I→K
 J→I
@@ -242,14 +242,22 @@ O→U
 K→O
 If Q-W:1/(Q-W)→Q
 End
-If O>999 or JO>99999
+If O>9999 or J>99999
 Goto @XD
-JO→K
-int(√(K))→I
-While fPart(K/I²)
+If not(J)
+Goto @XZ
+int(√(J))→I
+While fPart(J/I²)
 I-1→I
 End
-K/I²→U
+J/I²→U
+int(√(O))→K
+While fPart(O/K²)
+K-1→K
+End
+O/K²→W
+UW→U
+KW→O
 gcd(I,O)→W
 I/W→I
 O/W→O
@@ -262,7 +270,7 @@ If U≠1:Then:Output(R,θ,"√("):Output(R,θ+2,U):θ+3+W(U)→θ:Output(R,θ-1,
 If O≠1:Then:Output(R,θ,"/"):Output(R,θ+1,O):θ+1+W(O)→θ:End
 Goto @XR
 Lbl @XD
-Output(R,θ,round(X,6))
+Output(R,θ,round(X,max(0,min(6,16-θ-(X<0)-int(log(max(1,abs(X))))))))
 Goto @XR
 Lbl @XZ
 Output(R,θ,"0")
@@ -345,8 +353,8 @@ elif PROG_NAME == "SATTRIG":
     T("Lbl @MM")
     T("Lbl @PQ")
     menu("TC", "SAT TRIG CENTER", [
+        ("Any triangle", "TA"),
         ("Right triangle", "T1"),
-        ("Special tri", "T2"),
         ("Unit circle", "T3"),
         ("Trig tools", "T4"),
         ("Learn trig", "T5"),
@@ -1757,8 +1765,8 @@ Goto @PQ
 section("trig")
 if PROG_NAME != "SATTRIG":
     menu("TC", "TRIG CENTER", [
+        ("Any triangle", "TA"),
         ("Right triangle", "T1"),
-        ("Special tri", "T2"),
         ("Unit circle", "T3"),
         ("Trig tools", "T4"),
         ("Learn trig", "T5"),
@@ -1859,11 +1867,363 @@ Pause
 Goto @TC
 """)
 
+# ---------- Any triangle: enter whatever you know ----------
+# L₆ holds up to two solutions: L₆(1..3) sides a,b,c, L₆(4..6) angles A,B,C
+# (degrees) for solution 1, and L₆(7..12) the same for solution 2.
+def tri_load(slot) -> None:
+    """Solution `slot` (number, or the variable H) -> A,B,C sides and D,E,F angles."""
+    for i, v in enumerate("ABCDEF", 1):
+        idx = f"6{slot}-{6 - i}" if isinstance(slot, str) else str(6 * (slot - 1) + i)
+        T(f"L₆({idx.replace('-0', '')})→{v}")
+
+
+def tri_store(slot: int) -> None:
+    for i, v in enumerate("ABCDEF", 1):
+        T(f"{v}→L₆({6 * (slot - 1) + i})")
+
+
+def tri_angles() -> None:
+    """Sides A,B,C -> angles D,E,F (law of cosines)."""
+    T("""
+45/tan⁻¹(1)→M
+Mcos⁻¹(max(~1,min(1,(B²+C²-A²)/(2BC))))→D
+Mcos⁻¹(max(~1,min(1,(A²+C²-B²)/(2AC))))→E
+180-D-E→F
+""")
+
+
+def tri_sas() -> None:
+    """Side P is unknown, the other two sides and angle P are known: law of cosines."""
+    T("""
+L₆(1)+L₆(2)+L₆(3)-L₆(P)→M
+L₆(1)²+L₆(2)²+L₆(3)²-L₆(P)²→N
+√(max(0,N-(M²-N)cos(L₆(P+3)°)))→L₆(P)
+""")
+
+
+def tri_tan(row: int, ang: str, name: str) -> None:
+    T(f'Output({row},1,"tan {name}=")')
+    T(f"If abs(cos({ang}°))<.000000001")
+    T(f"Goto @TU{name}")
+    exact(f"tan({ang}°)", row, 7)
+    T(f"Goto @TV{name}")
+    T(f"Lbl @TU{name}")
+    T(f'Output({row},7,"undefined")')
+    T(f"Lbl @TV{name}")
+
+
+T("""
+Lbl @TA
+ClrHome
+Disp "ENTER KNOWN, 0=?"
+Input "side a=",A
+Input "side b=",B
+Input "side c=",C
+Input "angle A°=",D
+Input "angle B°=",E
+Input "angle C°=",F
+Input "area=",G
+{abs(A),abs(B),abs(C),D,E,F,0,0,0,0,0,0}→L₆
+For(I,4,6)
+If L₆(I)≤0 or L₆(I)≥180:0→L₆(I)
+End
+abs(G)→G
+0→V
+(L₆(1)>0)+(L₆(2)>0)+(L₆(3)>0)→S
+(L₆(4)>0)+(L₆(5)>0)+(L₆(6)>0)→P
+If P=2
+Then
+180-L₆(4)-L₆(5)-L₆(6)→M
+For(I,4,6)
+If not(L₆(I)):M→L₆(I)
+End
+3→P
+If M≤0:~1→P
+End
+If P=3 and abs(L₆(4)+L₆(5)+L₆(6)-180)>.000001:~1→P
+If P<0
+Goto @TXA
+If S=3
+Goto @TSS
+If P=3
+Goto @TAA
+If S=2 and P=1
+Goto @TS2
+If S=2 and not(P) and G>0
+Goto @TSK
+If S=1 and P=1 and G>0
+Goto @TS1
+Goto @TXN
+""")
+
+# --- 3 sides
+T("""
+Lbl @TSS
+""")
+tri_load(1)
+T("""
+If A+B≤C or A+C≤B or B+C≤A
+Goto @TXT
+""")
+tri_angles()
+tri_store(1)
+T("""
+1→N
+Goto @TOU
+""")
+
+# --- 3 angles (+ a side, or the area, or nothing = shape only)
+T("""
+Lbl @TAA
+""")
+tri_load(1)
+T("""
+If S
+Then
+If C:C/sin(F°)→M
+If B:B/sin(E°)→M
+If A:A/sin(D°)→M
+Else
+If G
+Then
+√(2G/(sin(D°)sin(E°)sin(F°)))→M
+Else
+1/min(sin(D°),min(sin(E°),sin(F°)))→M
+1→V
+End
+End
+Msin(D°)→A
+Msin(E°)→B
+Msin(F°)→C
+""")
+tri_store(1)
+T("""
+1→N
+Goto @TOU
+""")
+
+# --- 2 sides + 1 angle: SAS if the angle is between them, else SSA
+T("""
+Lbl @TS2
+For(I,1,3)
+If L₆(I+3):I→P
+End
+If L₆(P)
+Goto @TSA
+""")
+tri_sas()
+tri_load(1)
+tri_angles()
+tri_store(1)
+T("""
+1→N
+Goto @TOU
+Lbl @TSA
+For(I,1,3)
+If I≠P and L₆(I)>0:I→H
+End
+6-P-H→T
+L₆(H)sin(L₆(P+3)°)/L₆(P)→M
+If M>1.000000001
+Goto @TXT
+If M>.999999999:1→M
+45/tan⁻¹(1)→F
+Fsin⁻¹(M)→D
+180-D→E
+180-L₆(P+3)-D→C
+If C≤.000001
+Goto @TXT
+D→L₆(H+3)
+C→L₆(T+3)
+L₆(P)sin(C°)/sin(L₆(P+3)°)→L₆(T)
+1→N
+If L₆(P+3)+E<179.999999 and E-D>.000001
+Then
+For(I,1,6):L₆(I)→L₆(I+6):End
+E→L₆(H+9)
+180-L₆(P+3)-E→C
+C→L₆(T+9)
+L₆(P)sin(C°)/sin(L₆(P+3)°)→L₆(T+6)
+2→N
+End
+Goto @TOU
+""")
+
+# --- 2 sides + area: the angle between them is θ or 180-θ
+T("""
+Lbl @TSK
+For(I,1,3)
+If not(L₆(I)):I→P
+End
+L₆(1)+L₆(2)+L₆(3)→M
+L₆(1)²+L₆(2)²+L₆(3)²→N
+4G/(M²-N)→M
+If M>1.000000001
+Goto @TXT
+If M>.999999999:1→M
+45/tan⁻¹(1)→F
+Fsin⁻¹(min(M,1))→S
+1→H
+If abs(S-90)>.000001
+Then
+180-S→L₆(P+3)
+""")
+tri_sas()
+tri_load(1)
+tri_angles()
+tri_store(2)
+T("""
+0→L₆(P)
+2→H
+End
+S→L₆(P+3)
+""")
+tri_sas()
+tri_load(1)
+tri_angles()
+tri_store(1)
+T("""
+H→N
+Goto @TOU
+""")
+
+# --- 1 side + 1 angle next to it + area -> the other side, then SAS
+T("""
+Lbl @TS1
+For(I,1,3)
+If L₆(I):I→H
+If L₆(I+3):I→P
+End
+If H=P
+Goto @TXN
+6-H-P→T
+2G/(L₆(H)sin(L₆(P+3)°))→L₆(T)
+""")
+tri_sas()
+tri_load(1)
+tri_angles()
+tri_store(1)
+T("""
+1→N
+Goto @TOU
+""")
+
+# --- errors
+T("""
+Lbl @TXA
+ClrHome
+Disp "ANGLES MUST ADD","UP TO 180°"
+Pause
+Goto @TC
+Lbl @TXT
+ClrHome
+Disp "NO TRIANGLE FITS","THIS INFO","","(check sides:","a+b must be > c)"
+Pause
+Goto @TC
+Lbl @TXN
+ClrHome
+Disp "NOT ENOUGH INFO","Give 3 things:","3 sides, or","2 sides+1 angle,","or 2 angles and","a side or area.","(2 sides + area","also works)"
+Pause
+Goto @TC
+""")
+
+# --- results: 4 pages per solution
+T("""
+Lbl @TOU
+1→H
+Lbl @TO1
+""")
+tri_load("H")
+T("""
+ABsin(F°)/2→G
+ClrHome
+If N=2:Then:Output(1,1,"SOLUTION   OF 2"):Output(1,10,H):Else:Output(1,1,"TRIANGLE"):End
+If V:Output(1,1,"SIDES = RATIOS")
+Output(2,1,"a=")
+""")
+exact("A", 2, 3)
+T('Output(3,1,"b=")')
+exact("B", 3, 3)
+T('Output(4,1,"c=")')
+exact("C", 4, 3)
+T("""
+Output(5,1,"angle A=")
+Output(5,9,round(D,4))
+Output(6,1,"angle B=")
+Output(6,9,round(E,4))
+Output(7,1,"angle C=")
+Output(7,9,round(F,4))
+max(D,max(E,F))→M
+If abs(M-90)<.000001:Output(8,1,"right")
+If M>90.000001:Output(8,1,"obtuse")
+If M<89.999999:Output(8,1,"acute")
+(abs(A-B)<.000001max(A,B))+(abs(B-C)<.000001max(B,C))+(abs(A-C)<.000001max(A,C))→M
+If M=3:Output(8,8,"equilat.")
+If M=1:Output(8,8,"isosceles")
+If not(M):Output(8,8,"scalene")
+Pause
+ClrHome
+Output(1,1,"area=")
+""")
+exact("G", 1, 6)
+T('Output(2,1,"perim=")')
+exact("A+B+C", 2, 7)
+T('Output(3,1,"h(a)=")')
+exact("2G/A", 3, 6)
+T('Output(4,1,"h(b)=")')
+exact("2G/B", 4, 6)
+T('Output(5,1,"h(c)=")')
+exact("2G/C", 5, 6)
+T('Output(6,1,"circumR=")')
+exact("A/(2sin(D°))", 6, 9)
+T('Output(7,1,"inradius=")')
+exact("2G/(A+B+C)", 7, 10)
+T("""
+Output(8,1,"h=height to side")
+Pause
+ClrHome
+Output(1,1,"sin A=")
+""")
+exact("sin(D°)", 1, 7)
+T('Output(2,1,"sin B=")')
+exact("sin(E°)", 2, 7)
+T('Output(3,1,"sin C=")')
+exact("sin(F°)", 3, 7)
+T('Output(4,1,"cos A=")')
+exact("cos(D°)", 4, 7)
+T('Output(5,1,"cos B=")')
+exact("cos(E°)", 5, 7)
+T('Output(6,1,"cos C=")')
+exact("cos(F°)", 6, 7)
+T("""
+Output(8,1,"ENTER: tan")
+Pause
+ClrHome
+""")
+tri_tan(1, "D", "A")
+tri_tan(2, "E", "B")
+tri_tan(3, "F", "C")
+T("""
+Output(5,1,"a/sinA = b/sinB")
+Output(6,1," = c/sinC")
+Output(7,1," =")
+""")
+exact("A/sin(D°)", 7, 4)
+T("""
+If H<N:Output(8,1,"ENTER: next sol.")
+Pause
+H+1→H
+If H≤N
+Goto @TO1
+Goto @TC
+""")
+
+
 # ---------- Special right triangles ----------
 menu("T2", "SPECIAL RIGHT", [
     ("30-60-90", "S1"),
     ("45-45-90", "S2"),
-    ("Back", "TC"),
+    ("Back", "T4"),
 ])
 menu("S1", "30-60-90 KNOWN:", [
     ("Short leg  x", "S3"),
@@ -1962,8 +2322,10 @@ Input "angle rad=",V
 Lbl @U3
 round(D-360int(D/360),9)→E
 If E≥360:E-360→E
-round(sin(E°),9)→S
-round(cos(E°),9)→C
+sin(E°)→S
+cos(E°)→C
+S(abs(S)>.000000001)→S
+C(abs(C)>.000000001)→C
 E→G
 If E>90 and E≤180:180-E→G
 If E>180 and E≤270:E-180→G
@@ -2006,6 +2368,7 @@ Goto @T3
 
 # ---------- Trig tools ----------
 menu("T4", "TRIG TOOLS", [
+    ("Special tri", "T2"),
     ("Cofunction eqn", "CO"),
     ("Law of sines", "LS"),
     ("Law of cosines", "LC"),
@@ -2474,9 +2837,9 @@ randInt(0,2)→N
 randInt(0,3)→H
 (H=0)B+(H=1)(180-B)+(H=2)(180+B)+(H=3)(360-B)→D
 randInt(1,3)→V
-If V=1:round(sin(D°),9)→X
-If V=2:round(cos(D°),9)→X
-If V=3:round(tan(D°),9)→X
+If V=1:sin(D°)→X
+If V=2:cos(D°)→X
+If V=3:tan(D°)→X
 Output(2,1,"Exact value of")
 """)
     seg_row(3, [("n", "D"), "°:"])
