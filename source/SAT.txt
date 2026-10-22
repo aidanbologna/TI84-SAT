@@ -1,0 +1,2104 @@
+ClrHome
+Output(1,1,"+--------------+")
+Output(2,1,"|  SAT TOOLKIT |")
+Output(3,1,"|  Math + R&W  |")
+Output(4,1,"| Digital  SAT |")
+Output(5,1,"+--------------+")
+Output(7,3,"press ENTER")
+Pause
+Lbl A7
+Menu("SAT TOOLKIT","Math Solvers",A0,"Math Formulas",A1,"R&W Guide",A2,"Practice Quiz",A3,"Test Strategy",A4,"How To Use",A5,"Quit",A6)
+Lbl A3
+Menu("PRACTICE QUIZ","Math (random)",A8,"Grammar",A9,"Main Menu",A7)
+Lbl A0
+Menu("MATH SOLVERS","Quadratic",AA,"System 2x2",AB,"Line: 2 points",AC,"Exponential",AD,"Percent",AE,"Geometry/Stats",AF,"Main Menu",A7)
+Lbl AA
+ClrHome
+Disp "QUADRATIC","ax²+bx+c=0"
+Input "a=",A
+Input "b=",B
+Input "c=",C
+If not(A)
+Goto AG
+B²-4AC→D
+~B/(2A)→H
+AH²+BH+C→K
+ClrHome
+Disp "DISCRIMINANT"
+Disp D►Frac
+If D≥0
+Then
+If D:Then:Disp "2 REAL ROOTS":Else:Disp "1 REAL ROOT":End
+√(D)/(2abs(A))→R
+Disp "x="
+Disp H-R►Frac
+If D
+Then
+Disp "x="
+Disp H+R►Frac
+End
+Else
+√(~D)/(2abs(A))→R
+Disp "NONREAL: p+/-qi"
+Disp "p="
+Disp H►Frac
+Disp "q="
+Disp R►Frac
+End
+Pause
+If D>0 and fPart(√(abs(D))) and not(abs(fPart(A))+abs(fPart(B))+abs(fPart(C)))
+Then
+int(√(D))→U
+While fPart(D/U²)
+U-1→U
+End
+D/U²→V
+~B→P
+2A→S
+gcd(U,abs(S))→G
+If P:gcd(G,abs(P))→G
+P/G→P
+U/G→Q
+S/G→S
+If S<0:Then:~P→P:~S→S:End
+ClrHome
+Output(1,1,"EXACT ROOTS:")
+For(J,0,1)
+3J+2→R
+Output(R,1,"x=")
+3→θ
+If S≠1:Then:Output(R+int((θ-1)/16),θ-16int((θ-1)/16),"("):θ+1→θ:End
+If P:Then:Output(R+int((θ-1)/16),θ-16int((θ-1)/16),P):θ+(1+(P<0)+int(log(abs(P)+not(P))))→θ:End
+If P or J:Then:Output(R+int((θ-1)/16),θ-16int((θ-1)/16),sub("+-",J+1,1)):θ+1→θ:End
+If Q≠1:Then:Output(R+int((θ-1)/16),θ-16int((θ-1)/16),Q):θ+(1+(Q<0)+int(log(abs(Q)+not(Q))))→θ:End
+Output(R+int((θ-1)/16),θ-16int((θ-1)/16),"√(")
+θ+2→θ
+Output(R+int((θ-1)/16),θ-16int((θ-1)/16),V)
+θ+(1+(V<0)+int(log(abs(V)+not(V))))→θ
+Output(R+int((θ-1)/16),θ-16int((θ-1)/16),")")
+θ+1→θ
+If S≠1:Then:Output(R+int((θ-1)/16),θ-16int((θ-1)/16),")/"):θ+2→θ:Output(R+int((θ-1)/16),θ-16int((θ-1)/16),S):End
+End
+Pause
+End
+ClrHome
+Disp "VERTEX x=h"
+Disp H►Frac
+If A>0:Then:Disp "MIN VALUE y=k":Else:Disp "MAX VALUE y=k":End
+Disp K►Frac
+Disp "SUM OF ROOTS"
+Disp ~B/A►Frac
+Disp "PRODUCT OF ROOTS"
+Disp C/A►Frac
+Pause
+Goto A0
+Lbl AG
+ClrHome
+Disp "LINEAR (a=0)"
+If B:Then:Disp "x=":Disp ~C/B►Frac:Else:Disp "NO x TERM":End
+Pause
+Goto A0
+Lbl AB
+ClrHome
+Disp "ax+by=c","dx+ey=f"
+Input "a=",A
+Input "b=",B
+Input "c=",C
+Input "d=",D
+Input "e=",E
+Input "f=",F
+AE-BD→Z
+ClrHome
+If Z
+Then
+Disp "ONE SOLUTION","x="
+Disp (CE-BF)/Z►Frac
+Disp "y="
+Disp (AF-CD)/Z►Frac
+Else
+If CE-BF or AF-CD
+Then
+Disp "NO SOLUTION","(parallel lines)"
+Else
+Disp "INFINITELY MANY","(same line)"
+End
+End
+Pause
+Goto A0
+Lbl AC
+ClrHome
+Disp "LINE: 2 POINTS"
+Input "x1=",P
+Input "y1=",Q
+Input "x2=",R
+Input "y2=",S
+(R-P)²+(S-Q)²→N
+ClrHome
+If R=P
+Then
+Disp "VERTICAL LINE","x="
+Disp P►Frac
+Disp "SLOPE UNDEFINED"
+Else
+(S-Q)/(R-P)→M
+Q-MP→B
+Disp "SLOPE m"
+Disp M►Frac
+Disp "Y-INTERCEPT b"
+Disp B►Frac
+If M
+Then
+Disp "X-INTERCEPT"
+Disp ~B/M►Frac
+Disp "PERP. SLOPE"
+Disp ~1/M►Frac
+Else
+Disp "HORIZONTAL LINE"
+End
+End
+Pause
+ClrHome
+Disp "MIDPOINT (x,y)"
+Disp (P+R)/2►Frac
+Disp (Q+S)/2►Frac
+Disp "DISTANCE"
+Disp √(N)
+If not(fPart(N)) and fPart(√(N))
+Then
+int(√(N))→U
+While fPart(N/U²)
+U-1→U
+End
+N/U²→V
+Output(6,1,"=")
+2→θ
+If U≠1:Then:Output(6,θ,U):θ+(1+(U<0)+int(log(abs(U)+not(U))))→θ:End
+Output(6,θ,"√(")
+Output(6,θ+2,V)
+Output(6,θ+2+(1+(V<0)+int(log(abs(V)+not(V)))),")")
+End
+Pause
+Goto A0
+Lbl AD
+Menu("EXPONENTIAL","Find end value",AH,"Find rate %",AI,"Back",A0)
+Lbl AH
+ClrHome
+Disp "a(1+r/n)^(nt)","r in %, - decay","n=1 if yearly"
+Input "start a=",A
+Input "rate %=",R
+Input "times/yr n=",N
+Input "years t=",T
+If N<1 or fPart(N):1→N
+1+R/(100N)→G
+ClrHome
+If G>0
+Then
+AG^(NT)→Y
+Disp "END VALUE"
+Disp Y
+Disp "FACTOR PER YEAR"
+Disp G^N
+If A
+Then
+Disp "TOTAL % CHANGE"
+Disp 100(Y/A-1)
+End
+Else
+Disp "RATE MUST BE","MORE THAN -100%"
+End
+Pause
+Goto AD
+Lbl AI
+ClrHome
+Disp "FIND RATE","y=a(1+r)^t"
+Input "start a=",A
+Input "end y=",Y
+Input "periods t=",T
+ClrHome
+If T and AY>0
+Then
+(Y/A)^(1/T)→G
+Disp "GROWTH FACTOR"
+Disp G
+Disp "RATE % PER t"
+Disp 100(G-1)
+Else
+Disp "INVALID INPUT"
+End
+Pause
+Goto AD
+Lbl AE
+Menu("PERCENT","% change",AJ,"x% of y",AK,"x is ?% of y",AL,"Undo a % chg",AM,"Stacked %s",AN,"Proportion",AO,"Back",A0)
+Lbl AJ
+ClrHome
+Disp "% CHANGE"
+Input "old=",O
+Input "new=",N
+ClrHome
+If O
+Then
+Disp "% CHANGE"
+Disp 100(N-O)/O
+Disp "MULTIPLIER"
+Disp N/O►Frac
+Else
+Disp "OLD CAN'T BE 0"
+End
+Pause
+Goto AE
+Lbl AK
+ClrHome
+Disp "x% OF y"
+Input "x (%)=",X
+Input "y=",Y
+Disp "RESULT"
+Disp XY/100►Frac
+Pause
+Goto AE
+Lbl AL
+ClrHome
+Disp "x IS WHAT % OF y"
+Input "x=",X
+Input "y=",Y
+If Y
+Then
+Disp "PERCENT"
+Disp 100X/Y
+End
+Pause
+Goto AE
+Lbl AM
+ClrHome
+Disp "FIND ORIGINAL","after a % chg"
+Input "new value=",N
+Input "% chg (+/-)=",P
+If P≠~100
+Then
+Disp "ORIGINAL"
+Disp N/(1+P/100)►Frac
+End
+Pause
+Goto AE
+Lbl AN
+ClrHome
+Disp "STACKED CHANGES","use - for drops"
+Input "1st %=",P
+Input "2nd %=",Q
+(1+P/100)(1+Q/100)→M
+Disp "NET MULTIPLIER"
+Disp M
+Disp "NET % CHANGE"
+Disp 100(M-1)
+Pause
+Goto AE
+Lbl AO
+ClrHome
+Disp "a/b = c/x"
+Input "a=",A
+Input "b=",B
+Input "c=",C
+If A
+Then
+Disp "x=bc/a"
+Disp BC/A►Frac
+End
+Pause
+Goto AE
+Lbl AF
+Menu("GEOMETRY/STATS","Circle eqn",AP,"Right triangle",AQ,"Arc & sector",AR,"Mean/Median/SD",AS,"Missing value",AT,"Deg <-> Rad",AU,"Back",A0)
+Lbl AP
+ClrHome
+Disp "ax²+ay²+dx+ey","+f=0 (often a=1)"
+Input "a=",A
+Input "d=",D
+Input "e=",E
+Input "f=",F
+If not(A):1→A
+~D/(2A)→H
+~E/(2A)→K
+H²+K²-F/A→N
+ClrHome
+Disp "CENTER (h,k)"
+Disp H►Frac
+Disp K►Frac
+Disp "RADIUS SQUARED"
+Disp N►Frac
+If N>0
+Then
+Disp "RADIUS"
+Disp √(N)
+If not(fPart(N)) and fPart(√(N))
+Then
+int(√(N))→U
+While fPart(N/U²)
+U-1→U
+End
+N/U²→V
+Output(8,1,"=")
+2→θ
+If U≠1:Then:Output(8,θ,U):θ+(1+(U<0)+int(log(abs(U)+not(U))))→θ:End
+Output(8,θ,"√(")
+Output(8,θ+2,V)
+Output(8,θ+2+(1+(V<0)+int(log(abs(V)+not(V)))),")")
+End
+Else
+Disp "NOT A CIRCLE"
+End
+Pause
+Goto AF
+Lbl AQ
+ClrHome
+Disp "RIGHT TRIANGLE","legs a,b; hyp c","0 = unknown"
+Input "a=",A
+Input "b=",B
+Input "c=",C
+abs(A)→A
+abs(B)→B
+abs(C)→C
+If not(C):√(A²+B²)→C
+If not(A) and C>B:√(C²-B²)→A
+If not(B) and C>A:√(C²-A²)→B
+ClrHome
+If A≤0 or B≤0 or C≤max(A,B)
+Goto AV
+45/tan⁻¹(1)→F
+Disp "SIDES a, b, c"
+Disp round(A,4)
+Disp round(B,4)
+Disp round(C,4)
+Disp "ANGLE A (opp a)"
+Disp round(Ftan⁻¹(A/B),4)
+Disp "ANGLE B"
+Disp round(90-Ftan⁻¹(A/B),4)
+Pause
+ClrHome
+Disp "sin A = a/c"
+Disp A/C►Frac
+Disp "cos A = b/c"
+Disp B/C►Frac
+Disp "tan A = a/b"
+Disp A/B►Frac
+Disp "TIP: sinA=cosB"
+Pause
+Goto AF
+Lbl AV
+Disp "NEED 2 VALID","SIDES (c = hyp)"
+Pause
+Goto AF
+Lbl AR
+Menu("ANGLE UNITS?","Degrees",AW,"Radians",AX,"Back",AF)
+Lbl AW
+ClrHome
+Disp "ARC & SECTOR"
+Input "radius r=",R
+Input "angle deg=",D
+πD/180→T
+Goto AY
+Lbl AX
+ClrHome
+Disp "ARC & SECTOR","(π key is ok)"
+Input "radius r=",R
+Input "angle rad=",T
+Lbl AY
+ClrHome
+Disp "ARC LENGTH"
+Disp RT
+Disp "ARC / π"
+Disp RT/π►Frac
+Disp "SECTOR AREA"
+Disp R²T/2
+Disp "SECTOR AREA / π"
+Disp R²T/(2π)►Frac
+Pause
+ClrHome
+Disp "FRACTION OF"
+Disp "WHOLE CIRCLE"
+Disp T/(2π)►Frac
+Disp "ANGLE (DEGREES)"
+Disp 180T/π►Frac
+Disp "CIRCUMFERENCE"
+Disp 2πR
+Pause
+Goto AF
+Lbl AS
+ClrHome
+Disp "ENTER A LIST","like {2,5,9}"
+Input "list=",L₆
+dim(L₆)→N
+ClrHome
+Disp "MEAN"
+Disp mean(L₆)►Frac
+Disp "MEDIAN"
+Disp median(L₆)►Frac
+Disp "RANGE"
+Disp max(L₆)-min(L₆)
+Disp "SD (POPULATION)"
+Disp √(sum((L₆-mean(L₆))²)/N)
+Pause
+ClrHome
+Disp "COUNT n"
+Disp N
+Disp "SUM"
+Disp sum(L₆)
+Disp "MIN, MAX"
+Disp {min(L₆),max(L₆)}
+SortA(L₆)
+Disp "SORTED:"
+Disp L₆
+Pause
+Goto AF
+Lbl AT
+ClrHome
+Disp "ADD 1 VALUE TO","HIT A NEW MEAN"
+Input "count n=",N
+Input "mean now=",M
+Input "target mean=",T
+ClrHome
+Disp "VALUE NEEDED"
+Disp (N+1)T-NM►Frac
+Disp "SUM NOW"
+Disp NM►Frac
+Disp "SUM NEEDED"
+Disp (N+1)T►Frac
+Pause
+Goto AF
+Lbl AU
+Menu("CONVERT ANGLE","Deg -> Radians",AZ,"Rad -> Degrees",B0,"Back",AF)
+Lbl AZ
+ClrHome
+Input "degrees=",D
+Disp "RADIANS / π"
+Disp D/180►Frac
+Disp "RADIANS"
+Disp πD/180
+Pause
+Goto AU
+Lbl B0
+ClrHome
+Disp "(π key is ok)"
+Input "radians=",T
+Disp "DEGREES"
+Disp 180T/π►Frac
+Pause
+Goto AU
+Lbl A1
+Menu("ALGEBRA FORMULAS","Linear eqns",B1,"Quadratics",B2,"Exponents/Rads",B3,"Exponential",B4,"Functions",B5,"More formulas",B6,"Main Menu",A7)
+Lbl B6
+Menu("GEOMETRY + DATA","Geometry",B7,"Circles",B8,"Triangles/Trig",B9,"Statistics",BA,"Probability",BB,"Percent/Units",BC,"Back",A1)
+Lbl B1
+1→P
+Repeat K=45 or P>4
+ClrHome
+Output(1,1,"LINEAR EQNS")
+Output(1,14,P)
+Output(1,15,"/4")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"y=mx+b")
+Output(3,1,"m=slope b=y-int")
+Output(4,1,"slope=rise/run")
+Output(5,1,"=(y2-y1)/(x2-x1)")
+Output(6,1,"Point-slope:")
+Output(7,1,"y-y1=m(x-x1)")
+End
+If P=2
+Then
+Output(2,1,"Standard form:")
+Output(3,3,"Ax+By=C")
+Output(4,1,"slope = -A/B")
+Output(5,1,"y-int = C/B")
+Output(6,1,"x-int = C/A")
+End
+If P=3
+Then
+Output(2,1,"Parallel:")
+Output(3,3,"same slope")
+Output(4,1,"Perpendicular:")
+Output(5,2,"flip & negate m")
+Output(6,1,"Horizontal: y=k")
+Output(7,1,"Vertical: x=k")
+End
+If P=4
+Then
+Output(2,1,"ax+by=c, dx+ey=f")
+Output(3,1,"1 sol: a/d≠b/e")
+Output(4,1,"None: a/d=b/e")
+Output(5,7,"but ≠c/f")
+Output(6,1,"Inf: a/d=b/e=c/f")
+Output(7,1,"(same line)")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A1
+Lbl B2
+1→P
+Repeat K=45 or P>4
+ClrHome
+Output(1,1,"QUADRATICS")
+Output(1,14,P)
+Output(1,15,"/4")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"ax²+bx+c=0")
+Output(3,1,"x=(-b +/- √(D))")
+Output(4,7,"/(2a)")
+Output(5,1,"D = b²-4ac")
+Output(6,1,"D>0: 2 real sol")
+Output(7,1,"D=0: 1  D<0: 0")
+End
+If P=2
+Then
+Output(2,1,"Vertex form:")
+Output(3,3,"y=a(x-h)²+k")
+Output(4,1,"vertex (h,k)")
+Output(5,1,"h = -b/(2a)")
+Output(6,1,"a>0 opens up")
+Output(7,1,"a<0 opens down")
+End
+If P=3
+Then
+Output(2,1,"Factored form:")
+Output(3,3,"y=a(x-r)(x-s)")
+Output(4,1,"zeros: r and s")
+Output(5,1,"Sum roots=-b/a")
+Output(6,1,"Prod roots=c/a")
+Output(7,1,"Axis x=(r+s)/2")
+End
+If P=4
+Then
+Output(2,1,"y-int = c")
+Output(3,1,"max/min = k")
+Output(4,1,"(x+a)²=x²+2ax+a²")
+Output(5,1,"(x-a)²=x²-2ax+a²")
+Output(6,1,"x²-a²=(x+a)(x-a)")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A1
+Lbl B3
+1→P
+Repeat K=45 or P>2
+ClrHome
+Output(1,1,"EXPONENTS")
+Output(1,14,P)
+Output(1,15,"/2")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"x^a*x^b=x^(a+b)")
+Output(3,1,"x^a/x^b=x^(a-b)")
+Output(4,1,"(x^a)^b=x^(ab)")
+Output(5,1,"(xy)^a=x^a*y^a")
+Output(6,1,"x^0=1")
+Output(7,1,"x^-n=1/x^n")
+End
+If P=2
+Then
+Output(2,1,"x^(1/2)=√(x)")
+Output(3,1,"x^(m/n)=")
+Output(4,2,"(nth root x)^m")
+Output(5,1,"√(ab)=√(a)√(b)")
+Output(6,1,"√(a/b)=√(a)/√(b)")
+Output(7,1,"1/√(a)=√(a)/a")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A1
+Lbl B4
+1→P
+Repeat K=45 or P>3
+ClrHome
+Output(1,1,"EXPONENTIAL")
+Output(1,14,P)
+Output(1,15,"/3")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"y=a(1+r)^t")
+Output(3,1,"a=start value")
+Output(4,1,"r=rate (decimal)")
+Output(5,1,"Grow: a(1+r)^t")
+Output(6,1,"Decay:a(1-r)^t")
+Output(7,1,"b>1 grow b<1 dec")
+End
+If P=2
+Then
+Output(2,1,"Compound n/yr:")
+Output(3,3,"a(1+r/n)^(nt)")
+Output(4,1,"Doubles every d:")
+Output(5,3,"a*2^(t/d)")
+Output(6,1,"Half-life h:")
+Output(7,3,"a*(1/2)^(t/h)")
+End
+If P=3
+Then
+Output(2,1,"LINEAR: adds a")
+Output(3,2,"constant amount")
+Output(4,1,"EXP: multiplies")
+Output(5,2,"by same factor")
+Output(7,1,"+5/yr vs +5%/yr")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A1
+Lbl B5
+1→P
+Repeat K=45 or P>3
+ClrHome
+Output(1,1,"FUNCTIONS")
+Output(1,14,P)
+Output(1,15,"/3")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"Graph shifts:")
+Output(3,1,"f(x)+k  up k")
+Output(4,1,"f(x-h)  right h")
+Output(5,1,"f(x+h)  left h")
+Output(6,1,"-f(x)  flip vert")
+Output(7,1,"f(-x)  flip horz")
+End
+If P=2
+Then
+Output(2,1,"Zeros = roots =")
+Output(3,2,"x-intercepts:")
+Output(4,2,"where f(x)=0")
+Output(5,1,"f(a)=b means")
+Output(6,2,"point (a,b)")
+Output(7,1,"f(g(x)): g first")
+End
+If P=3
+Then
+Output(2,1,"Domain: x values")
+Output(3,1,"Range: y values")
+Output(4,1,"Avoid /0, √(neg)")
+Output(5,1,"TI TIP: graph in")
+Output(6,1,"Y=, 2nd TRACE:")
+Output(7,1,"zero/min/max/int")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A1
+Lbl B7
+1→P
+Repeat K=45 or P>4
+ClrHome
+Output(1,1,"GEOMETRY")
+Output(1,14,P)
+Output(1,15,"/4")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"AREA")
+Output(3,1,"Rect: lw")
+Output(4,1,"Tri: (1/2)bh")
+Output(5,1,"Trap: (b1+b2)h/2")
+Output(6,1,"Circle: πr²")
+Output(7,1,"Circum: 2πr")
+End
+If P=2
+Then
+Output(2,1,"VOLUME")
+Output(3,1,"Box: lwh")
+Output(4,1,"Cyl: πr²h")
+Output(5,1,"Sphere: 4/3πr³")
+Output(6,1,"Cone: 1/3πr²h")
+Output(7,1,"Pyramid: 1/3lwh")
+End
+If P=3
+Then
+Output(2,1,"ANGLES")
+Output(3,1,"Line: 180°")
+Output(4,1,"Triangle: 180°")
+Output(5,1,"n-gon: 180(n-2)")
+Output(6,1,"Vertical angles=")
+Output(7,1,"Parallel+transv.")
+End
+If P=4
+Then
+Output(2,1,"SIMILAR SHAPES")
+Output(3,1,"side ratio k")
+Output(4,1,"area ratio k²")
+Output(5,1,"volume ratio k³")
+Output(6,1,"Ex: double r")
+Output(7,2,"-> area *4")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto B6
+Lbl B8
+1→P
+Repeat K=45 or P>4
+ClrHome
+Output(1,1,"CIRCLES")
+Output(1,14,P)
+Output(1,15,"/4")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"(x-h)²+(y-k)²=r²")
+Output(3,1,"center (h,k)")
+Output(4,1,"radius r")
+Output(5,1,"Got x²+y²+dx..?")
+Output(6,1,"complete square")
+Output(7,1,"or use SOLVER")
+End
+If P=2
+Then
+Output(2,1,"Complete square:")
+Output(3,1,"x²+6x -> add 9")
+Output(4,2,"= (x+3)²")
+Output(5,1,"Add (b/2)² to")
+Output(6,2,"BOTH sides")
+End
+If P=3
+Then
+Output(2,1,"Arc=(θ/360)2πr")
+Output(3,1,"Sect=(θ/360)πr²")
+Output(4,1,"In radians:")
+Output(5,2,"Arc = rθ")
+Output(6,2,"Sect=(1/2)r²θ")
+Output(7,1,"180° = π rad")
+End
+If P=4
+Then
+Output(2,1,"Tangent line is")
+Output(3,2,"perp to radius")
+Output(4,1,"Inscribed angle")
+Output(5,2,"= half its arc")
+Output(6,1,"Central angle")
+Output(7,2,"= its arc")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto B6
+Lbl B9
+1→P
+Repeat K=45 or P>4
+ClrHome
+Output(1,1,"TRIANGLES")
+Output(1,14,P)
+Output(1,15,"/4")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"a²+b²=c²")
+Output(3,1,"Triples: 3-4-5")
+Output(4,2,"5-12-13 8-15-17")
+Output(5,2,"7-24-25")
+Output(6,1,"45-45-90:")
+Output(7,2,"x, x, x√(2)")
+End
+If P=2
+Then
+Output(2,1,"30-60-90:")
+Output(3,2,"x, x√(3), 2x")
+Output(4,1,"(short,long,hyp)")
+Output(5,1,"Triangle ineq:")
+Output(6,2,"c < a+b")
+Output(7,1,"Lg side=lg angle")
+End
+If P=3
+Then
+Output(2,1,"SOH CAH TOA")
+Output(3,1,"sin=opp/hyp")
+Output(4,1,"cos=adj/hyp")
+Output(5,1,"tan=opp/adj")
+Output(6,1,"sin(x)=cos(90-x)")
+Output(7,1,"Check MODE:DEG!")
+End
+If P=4
+Then
+Output(2,1,"deg*π/180=rad")
+Output(3,1,"rad*180/π=deg")
+Output(4,1,"sin²x+cos²x=1")
+Output(5,1,"Unit circle pt:")
+Output(6,2,"(cos θ, sin θ)")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto B6
+Lbl BA
+1→P
+Repeat K=45 or P>4
+ClrHome
+Output(1,1,"STATISTICS")
+Output(1,14,P)
+Output(1,15,"/4")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"Mean=sum/count")
+Output(3,1,"Median=middle")
+Output(4,2,"(sort first!)")
+Output(5,1,"Mode=most often")
+Output(6,1,"Range=max-min")
+Output(7,1,"Sum=mean*count")
+End
+If P=2
+Then
+Output(2,1,"Outlier effect:")
+Output(3,1,"Mean moves a lot")
+Output(4,1,"Median barely")
+Output(5,1,"SD = spread")
+Output(6,1,"More spread out")
+Output(7,2,"= bigger SD")
+End
+If P=3
+Then
+Output(2,1,"Margin of error:")
+Output(3,2,"est +/- MOE")
+Output(4,2,"= likely range")
+Output(5,1,"Bigger sample")
+Output(6,2,"= smaller MOE")
+End
+If P=4
+Then
+Output(2,1,"Random sample:")
+Output(3,2,"results apply")
+Output(4,2,"to population")
+Output(5,1,"Random assign:")
+Output(6,2,"can show cause")
+Output(7,1,"Else: only link")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto B6
+Lbl BB
+1→P
+Repeat K=45 or P>2
+ClrHome
+Output(1,1,"PROBABILITY")
+Output(1,14,P)
+Output(1,15,"/2")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"P=want/total")
+Output(3,1,"P(A or B)=")
+Output(4,2,"P(A)+P(B)-both")
+Output(5,1,"Indep: P(A)P(B)")
+Output(6,1,"P(not A)=1-P(A)")
+End
+If P=2
+Then
+Output(2,1,"Two-way tables:")
+Output(3,1,"P(A given B)=")
+Output(4,2,"count A&B")
+Output(5,2,"/ count B")
+Output(6,1,"The GIVEN group")
+Output(7,2,"= your total!")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto B6
+Lbl BC
+1→P
+Repeat K=45 or P>3
+ClrHome
+Output(1,1,"PERCENT/UNIT")
+Output(1,14,P)
+Output(1,15,"/3")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"%chg=")
+Output(3,2,"(new-old)/old")
+Output(4,1,"x% of y=(x/100)y")
+Output(5,1,"Up p%:*(1+p/100)")
+Output(6,1,"Dn p%:*(1-p/100)")
+Output(7,1,"Orig=new/mult")
+End
+If P=2
+Then
+Output(2,1,"Stacked changes:")
+Output(3,1,"+20% then -20%")
+Output(4,2,"=1.2*.8=.96")
+Output(5,2,"= 4% DECREASE")
+Output(6,1,"Units: multiply")
+Output(7,2,"by unit ratios")
+End
+If P=3
+Then
+Output(2,1,"1 ft=12 in")
+Output(3,1,"1 yd=3 ft")
+Output(4,1,"1 mi=5280 ft")
+Output(5,1,"1 hr=3600 s")
+Output(6,1,"ft²->in²: *144")
+Output(7,1,"ft³->in³: *1728")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto B6
+Lbl A2
+Menu("READING+WRITING","Punctuation",BD,"Grammar",BE,"Transitions",BF,"Notes Qs",BG,"Reading Qs",BH,"R&W Strategy",BI,"Main Menu",A7)
+Lbl BD
+1→P
+Repeat K=45 or P>7
+ClrHome
+Output(1,1,"PUNCTUATION")
+Output(1,14,P)
+Output(1,15,"/7")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"IC=independent")
+Output(3,2,"clause (could")
+Output(4,2,"be a sentence)")
+Output(5,1,"IC; IC   OK")
+Output(6,1,"IC, IC   WRONG")
+Output(7,2,"(comma splice)")
+End
+If P=2
+Then
+Output(2,1,"Fix a splice:")
+Output(3,1,"IC. IC / IC; IC")
+Output(4,1,"IC, FANBOYS IC")
+Output(5,1,"FANBOYS =")
+Output(6,1,"for,and,nor,but,")
+Output(7,1,"or,yet,so")
+End
+If P=3
+Then
+Output(2,1,"COLON :")
+Output(3,1,"IC: list/explain")
+Output(4,1,"Before the colon")
+Output(5,2,"= a full IC!")
+Output(6,1,"I had one goal:")
+Output(7,2,"to win.")
+End
+If P=4
+Then
+Output(2,1,"DASH --")
+Output(3,1,"acts as a colon")
+Output(4,2,"OR like a pair")
+Output(5,2,"of commas")
+Output(6,1,"Match the pair:")
+Output(7,1,",X,  -X-  (X)")
+End
+If P=5
+Then
+Output(2,1,"COMMAS: use for")
+Output(3,1,"-intro phrases,")
+Output(4,1,"-extra info, in")
+Output(5,2,"a matched pair,")
+Output(6,1,"-lists: a, b, c")
+Output(7,1,"-IC, FANBOYS IC")
+End
+If P=6
+Then
+Output(2,1,"NO comma between")
+Output(3,1,"-subject & verb")
+Output(4,1,"-verb & object")
+Output(5,1,"-before 'that'")
+Output(6,1,"-essential info")
+Output(7,1,"Doubt? Cut it.")
+End
+If P=7
+Then
+Output(2,1,"APOSTROPHES '")
+Output(3,1,"dog's = 1 dog")
+Output(4,1,"dogs' = 2+ dogs")
+Output(5,1,"its = possessive")
+Output(6,1,"it's = it is")
+Output(7,1,"whose vs who's")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A2
+Lbl BE
+1→P
+Repeat K=45 or P>8
+ClrHome
+Output(1,1,"GRAMMAR")
+Output(1,14,P)
+Output(1,15,"/8")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"SUBJECT-VERB")
+Output(3,1,"Cross out 'of'")
+Output(4,2,"phrases:")
+Output(5,1,"The box of toys")
+Output(6,2,"IS heavy.")
+Output(7,1,"Each/every = 1")
+End
+If P=2
+Then
+Output(2,1,"Tricky singular:")
+Output(3,1,"each, everyone,")
+Output(4,1,"team, group,")
+Output(5,1,"either, neither")
+Output(6,1,"There IS a cat")
+Output(7,1,"There ARE cats")
+End
+If P=3
+Then
+Output(2,1,"Or/nor: verb")
+Output(3,2,"matches the")
+Output(4,2,"NEARER noun:")
+Output(5,1,"Neither he nor")
+Output(6,2,"they ARE ready")
+End
+If P=4
+Then
+Output(2,1,"PRONOUNS match")
+Output(3,2,"their noun:")
+Output(4,1,"company -> its")
+Output(5,1,"parents -> their")
+Output(6,1,"who = people")
+Output(7,1,"which = things")
+End
+If P=5
+Then
+Output(2,1,"who = he (subj)")
+Output(3,1,"whom = him (obj)")
+Output(4,1,"I vs me: drop")
+Output(5,2,"the other noun")
+Output(6,1,"Me and Al went X")
+Output(7,1,"Al and I went OK")
+End
+If P=6
+Then
+Output(2,1,"VERB TENSE:")
+Output(3,1,"match nearby")
+Output(4,2,"verbs & dates")
+Output(5,1,"In 1990 -> past")
+Output(6,1,"had + verb =")
+Output(7,2,"earlier past")
+End
+If P=7
+Then
+Output(2,1,"MODIFIERS:")
+Output(3,1,"Walking home,")
+Output(4,2,"SHE saw a dog.")
+Output(5,1,"Noun after the")
+Output(6,2,"comma does the")
+Output(7,2,"intro action!")
+End
+If P=8
+Then
+Output(2,1,"PARALLEL lists:")
+Output(3,1,"to run, swim,")
+Output(4,2,"and bike  OK")
+Output(5,1,"running, swim,")
+Output(6,2,"to bike  WRONG")
+Output(7,1,"CONCISE wins!")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A2
+Lbl BF
+1→P
+Repeat K=45 or P>6
+ClrHome
+Output(1,1,"TRANSITIONS")
+Output(1,14,P)
+Output(1,15,"/6")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"Read sentence")
+Output(3,2,"BEFORE & after")
+Output(4,1,"Name the link:")
+Output(5,1,"contrast? cause?")
+Output(6,2,"example? more?")
+Output(7,1,"Then pick word.")
+End
+If P=2
+Then
+Output(2,1,"CONTRAST:")
+Output(3,1,"however, but")
+Output(4,1,"nevertheless,")
+Output(5,1,"in contrast,")
+Output(6,1,"conversely,")
+Output(7,1,"still, yet")
+End
+If P=3
+Then
+Output(2,1,"ADD / SAME WAY:")
+Output(3,1,"furthermore,")
+Output(4,1,"moreover,")
+Output(5,1,"additionally,")
+Output(6,1,"similarly,")
+Output(7,1,"likewise,")
+End
+If P=4
+Then
+Output(2,1,"CAUSE->EFFECT:")
+Output(3,1,"therefore,")
+Output(4,1,"thus, hence,")
+Output(5,1,"consequently,")
+Output(6,1,"as a result,")
+Output(7,1,"accordingly,")
+End
+If P=5
+Then
+Output(2,1,"EXAMPLE:")
+Output(3,1,"for example,")
+Output(4,1,"for instance,")
+Output(5,1,"CLARIFY:")
+Output(6,1,"in other words,")
+Output(7,1,"that is,")
+End
+If P=6
+Then
+Output(2,1,"TIME / ORDER:")
+Output(3,1,"subsequently,")
+Output(4,1,"meanwhile, then")
+Output(5,1,"CONCLUDE:")
+Output(6,1,"in sum, overall")
+Output(7,1,"ultimately,")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A2
+Lbl BG
+1→P
+Repeat K=45 or P>3
+ClrHome
+Output(1,1,"NOTES Qs")
+Output(1,14,P)
+Output(1,15,"/3")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"Student notes Qs")
+Output(3,1,"1. Read the GOAL")
+Output(4,2,"in the question")
+Output(5,1,"2. Pick choice")
+Output(6,2,"that does ONLY")
+Output(7,2,"that goal")
+End
+If P=2
+Then
+Output(2,1,"Goal keywords:")
+Output(3,1,"compare->2 items")
+Output(4,1,"contrast->diffs")
+Output(5,1,"emphasize->focus")
+Output(6,1,"unfamiliar aud.")
+Output(7,1,"->explain/define")
+End
+If P=3
+Then
+Output(2,1,"Wrong answers:")
+Output(3,1,"-true but off-")
+Output(4,2,"goal")
+Output(5,1,"-only half of")
+Output(6,2,"the goal")
+Output(7,1,"-extra details")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A2
+Lbl BH
+1→P
+Repeat K=45 or P>6
+ClrHome
+Output(1,1,"READING Qs")
+Output(1,14,P)
+Output(1,15,"/6")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"WORDS IN CONTEXT")
+Output(3,1,"Cover choices.")
+Output(4,1,"Predict your own")
+Output(5,2,"word from clues")
+Output(6,1,"Match prediction")
+End
+If P=2
+Then
+Output(2,1,"MAIN PURPOSE:")
+Output(3,1,"Whole text, not")
+Output(4,2,"one detail")
+Output(5,1,"Verbs: argue,")
+Output(6,2,"describe, show,")
+Output(7,2,"challenge...")
+End
+If P=3
+Then
+Output(2,1,"EVIDENCE Qs:")
+Output(3,1,"Find the claim")
+Output(4,1,"Choice must")
+Output(5,1,"DIRECTLY back it")
+Output(6,1,"Data Qs: read")
+Output(7,2,"the labels!")
+End
+If P=4
+Then
+Output(2,1,"INFERENCE:")
+Output(3,1,"Most logical")
+Output(4,2,"completion")
+Output(5,1,"Must be PROVEN")
+Output(6,2,"by the text")
+Output(7,1,"Avoid extremes")
+End
+If P=5
+Then
+Output(2,1,"CROSS-TEXT:")
+Output(3,1,"Text 1 vs Text 2")
+Output(4,1,"How would the")
+Output(5,2,"author of 2")
+Output(6,2,"respond to 1?")
+Output(7,1,"agree/disagree?")
+End
+If P=6
+Then
+Output(2,1,"TEXT STRUCTURE:")
+Output(3,1,"Label each line:")
+Output(4,2,"claim/evidence/")
+Output(5,2,"counter/example")
+Output(6,1,"Purpose of a")
+Output(7,2,"line = its job")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A2
+Lbl BI
+1→P
+Repeat K=45 or P>3
+ClrHome
+Output(1,1,"R&W STRATEGY")
+Output(1,14,P)
+Output(1,15,"/3")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"Module: 27 Qs")
+Output(3,2,"in 32 minutes")
+Output(4,1,"~70 sec per Q")
+Output(5,1,"No penalty for")
+Output(6,2,"guessing, so")
+Output(7,2,"answer EVERY Q")
+End
+If P=2
+Then
+Output(2,1,"Grammar Qs:")
+Output(3,1,"What differs in")
+Output(4,2,"the choices?")
+Output(5,1,"That is the")
+Output(6,2,"rule being")
+Output(7,2,"tested.")
+End
+If P=3
+Then
+Output(2,1,"Stuck? Use")
+Output(3,1,"Mark for Review")
+Output(4,2,"and come back")
+Output(5,1,"Elimination:")
+Output(6,1,"Wrong if ANY")
+Output(7,2,"part is wrong")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A2
+Lbl A4
+1→P
+Repeat K=45 or P>5
+ClrHome
+Output(1,1,"STRATEGY")
+Output(1,14,P)
+Output(1,15,"/5")
+Output(8,1,"<- -> CLEAR:menu")
+If P=1
+Then
+Output(2,1,"DIGITAL SAT")
+Output(3,1,"R&W: 2x32 min")
+Output(4,2,"54 questions")
+Output(5,1,"Math: 2x35 min")
+Output(6,2,"44 questions")
+Output(7,1,"Score 400-1600")
+End
+If P=2
+Then
+Output(2,1,"ADAPTIVE:")
+Output(3,1,"Module 2 gets")
+Output(4,2,"harder if M1")
+Output(5,2,"goes well.")
+Output(6,1,"Accuracy in M1")
+Output(7,2,"matters most!")
+End
+If P=3
+Then
+Output(2,1,"MATH:")
+Output(3,1,"~95 sec per Q")
+Output(4,1,"Calc OK on all")
+Output(5,2,"of Math")
+Output(6,1,"Plug in answers")
+Output(7,2,"or pick numbers")
+End
+If P=4
+Then
+Output(2,1,"TYPED ANSWERS:")
+Output(3,1,"Negative OK")
+Output(4,1,"Fractions OK")
+Output(5,1,"5 chars (+)")
+Output(6,1,"6 chars (-)")
+Output(7,1,"No mixed #s")
+End
+If P=5
+Then
+Output(2,1,"TEST DAY:")
+Output(3,1,"Fresh batteries!")
+Output(4,1,"Bring a backup")
+Output(5,1,"Sleep > cramming")
+Output(6,1,"Arrive early")
+Output(7,1,"You've got this!")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A7
+Lbl A5
+1→P
+Repeat K=45 or P>1
+ClrHome
+Output(1,1,"HOW TO USE")
+Output(8,1,"ENTER: back")
+Output(2,1,"Menus: press #")
+Output(3,1,"Pages: < > keys")
+Output(4,2,"or ENTER")
+Output(5,1,"CLEAR: go back")
+Output(6,1,"Frozen? ON key")
+Output(7,1,"Uses A-Z,θ,L6")
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A7
+Lbl A8
+0→L
+0→T
+Lbl BJ
+randInt(1,10)→Z
+ClrHome
+Disp "","","","","",""
+Output(1,1,"MATH Q")
+Output(1,7,T+1)
+If Z=1
+Then
+randInt(2,9)→A
+randInt(~9,9)→X
+randInt(1,15)(2randInt(0,1)-1)→B
+AX+B→C
+Output(3,1,"Solve for x:")
+1→θ
+If A<0:Then:Output(5,θ,"-"):θ+1→θ:End
+If abs(A)≠1:Then:Output(5,θ,abs(A)):θ+(1+(abs(A)<0)+int(log(abs(abs(A))+not(abs(A)))))→θ:End
+Output(5,θ,"x"):θ+1→θ
+If B
+Then
+If B>0:Then:Output(5,θ,"+"):θ+1→θ:End
+If B<0:Then:Output(5,θ,"-"):θ+1→θ:End
+Output(5,θ,abs(B)):θ+(1+(abs(B)<0)+int(log(abs(abs(B))+not(abs(B)))))→θ
+End
+Output(5,θ,"=")
+θ+1→θ
+Output(5,θ,C)
+θ+(1+(C<0)+int(log(abs(C)+not(C))))→θ
+End
+If Z=2
+Then
+5randInt(1,19)→P
+20randInt(1,10)→N
+PN/100→X
+Output(3,1,"What is")
+1→θ
+Output(4,θ,P)
+θ+(1+(P<0)+int(log(abs(P)+not(P))))→θ
+Output(4,θ,"% of ")
+θ+5→θ
+Output(4,θ,N)
+θ+(1+(N<0)+int(log(abs(N)+not(N))))→θ
+Output(4,θ,"?")
+θ+1→θ
+End
+If Z=3
+Then
+randInt(~9,9)→P
+randInt(~9,9)→Q
+P+randInt(1,6)(2randInt(0,1)-1)→R
+randInt(~9,9)→S
+(S-Q)/(R-P)→X
+Output(2,1,"Slope of line")
+Output(3,1,"through:")
+1→θ
+Output(4,θ,"(")
+θ+1→θ
+Output(4,θ,P)
+θ+(1+(P<0)+int(log(abs(P)+not(P))))→θ
+Output(4,θ,",")
+θ+1→θ
+Output(4,θ,Q)
+θ+(1+(Q<0)+int(log(abs(Q)+not(Q))))→θ
+Output(4,θ,")")
+θ+1→θ
+1→θ
+Output(5,θ,"and (")
+θ+5→θ
+Output(5,θ,R)
+θ+(1+(R<0)+int(log(abs(R)+not(R))))→θ
+Output(5,θ,",")
+θ+1→θ
+Output(5,θ,S)
+θ+(1+(S<0)+int(log(abs(S)+not(S))))→θ
+Output(5,θ,")")
+θ+1→θ
+End
+If Z=4
+Then
+randInt(2,9)→A
+randInt(2,9)→B
+randInt(0,1)→V
+Output(2,1,"Find n:")
+If V
+Then
+A+B→X
+1→θ
+Output(4,θ,"x^")
+θ+2→θ
+Output(4,θ,A)
+θ+(1+(A<0)+int(log(abs(A)+not(A))))→θ
+Output(4,θ,"*x^")
+θ+3→θ
+Output(4,θ,B)
+θ+(1+(B<0)+int(log(abs(B)+not(B))))→θ
+Else
+AB→X
+1→θ
+Output(4,θ,"(x^")
+θ+3→θ
+Output(4,θ,A)
+θ+(1+(A<0)+int(log(abs(A)+not(A))))→θ
+Output(4,θ,")^")
+θ+2→θ
+Output(4,θ,B)
+θ+(1+(B<0)+int(log(abs(B)+not(B))))→θ
+End
+Output(5,1,"= x^n")
+End
+If Z=5
+Then
+randInt(1,15)→A
+randInt(1,15)→B
+randInt(1,15)→C
+randInt(1,15)→D
+4fPart((A+B+C+D)/4)→U
+D+(4-U)(U>0)→D
+D→X
+(A+B+C+D)/4→M
+Output(2,1,"Mean of 4 nums")
+1→θ
+Output(3,θ,"is ")
+θ+3→θ
+Output(3,θ,M)
+θ+(1+(M<0)+int(log(abs(M)+not(M))))→θ
+Output(3,θ,". Three are")
+θ+11→θ
+1→θ
+Output(4,θ,A)
+θ+(1+(A<0)+int(log(abs(A)+not(A))))→θ
+Output(4,θ,", ")
+θ+2→θ
+Output(4,θ,B)
+θ+(1+(B<0)+int(log(abs(B)+not(B))))→θ
+Output(4,θ,", ")
+θ+2→θ
+Output(4,θ,C)
+θ+(1+(C<0)+int(log(abs(C)+not(C))))→θ
+Output(4,θ,".")
+θ+1→θ
+Output(5,1,"Find the 4th.")
+End
+If Z=6
+Then
+randInt(~8,8)→B
+randInt(~10,10)→C
+If randInt(1,3)=1
+Then
+2randInt(~4,4)→B
+B²/4→C
+End
+B²-4C→D
+2(D>0)+(D=0)→X
+Output(2,1,"How many real")
+Output(3,1,"solutions?")
+1→θ
+Output(5,θ,"x²")
+θ+2→θ
+If B
+Then
+If B>0:Then:Output(5,θ,"+"):θ+1→θ:End
+If B<0:Then:Output(5,θ,"-"):θ+1→θ:End
+If abs(B)≠1:Then:Output(5,θ,abs(B)):θ+(1+(abs(B)<0)+int(log(abs(abs(B))+not(abs(B)))))→θ:End
+Output(5,θ,"x"):θ+1→θ
+End
+If C
+Then
+If C>0:Then:Output(5,θ,"+"):θ+1→θ:End
+If C<0:Then:Output(5,θ,"-"):θ+1→θ:End
+Output(5,θ,abs(C)):θ+(1+(abs(C)<0)+int(log(abs(abs(C))+not(abs(C)))))→θ
+End
+Output(5,θ,"=0")
+θ+2→θ
+End
+If Z=7
+Then
+randInt(1,3)(2randInt(0,1)-1)→A
+randInt(~6,6)→H
+~2AH→B
+randInt(~9,9)→C
+H→X
+Output(2,1,"x-coord of the")
+Output(3,1,"vertex of:")
+1→θ
+Output(5,θ,"y=")
+θ+2→θ
+If A<0:Then:Output(5,θ,"-"):θ+1→θ:End
+If abs(A)≠1:Then:Output(5,θ,abs(A)):θ+(1+(abs(A)<0)+int(log(abs(abs(A))+not(abs(A)))))→θ:End
+Output(5,θ,"x²"):θ+2→θ
+If B
+Then
+If B>0:Then:Output(5,θ,"+"):θ+1→θ:End
+If B<0:Then:Output(5,θ,"-"):θ+1→θ:End
+If abs(B)≠1:Then:Output(5,θ,abs(B)):θ+(1+(abs(B)<0)+int(log(abs(abs(B))+not(abs(B)))))→θ:End
+Output(5,θ,"x"):θ+1→θ
+End
+If C
+Then
+If C>0:Then:Output(5,θ,"+"):θ+1→θ:End
+If C<0:Then:Output(5,θ,"-"):θ+1→θ:End
+Output(5,θ,abs(C)):θ+(1+(abs(C)<0)+int(log(abs(abs(C))+not(abs(C)))))→θ
+End
+End
+If Z=8
+Then
+randInt(1,5)→A
+randInt(~9,9)→B
+randInt(~4,4)→K
+AK²+B→X
+1→θ
+Output(2,θ,"f(x)=")
+θ+5→θ
+If A<0:Then:Output(2,θ,"-"):θ+1→θ:End
+If abs(A)≠1:Then:Output(2,θ,abs(A)):θ+(1+(abs(A)<0)+int(log(abs(abs(A))+not(abs(A)))))→θ:End
+Output(2,θ,"x²"):θ+2→θ
+If B
+Then
+If B>0:Then:Output(2,θ,"+"):θ+1→θ:End
+If B<0:Then:Output(2,θ,"-"):θ+1→θ:End
+Output(2,θ,abs(B)):θ+(1+(abs(B)<0)+int(log(abs(abs(B))+not(abs(B)))))→θ
+End
+1→θ
+Output(4,θ,"Find f(")
+θ+7→θ
+Output(4,θ,K)
+θ+(1+(K<0)+int(log(abs(K)+not(K))))→θ
+Output(4,θ,")")
+θ+1→θ
+End
+If Z=9
+Then
+randInt(~9,9)→X
+randInt(~9,9)→Y
+X+Y→U
+X-Y→V
+1→θ
+Output(2,θ,"x+y=")
+θ+4→θ
+Output(2,θ,U)
+θ+(1+(U<0)+int(log(abs(U)+not(U))))→θ
+1→θ
+Output(3,θ,"x-y=")
+θ+4→θ
+Output(3,θ,V)
+θ+(1+(V<0)+int(log(abs(V)+not(V))))→θ
+Output(5,1,"Find x.")
+End
+If Z=10
+Then
+randInt(~5,5)→H
+randInt(~5,5)→K
+randInt(1,9)→X
+~2H→D
+~2K→E
+H²+K²-X²→F
+~F→G
+Output(2,1,"Radius of:")
+1→θ
+Output(4,θ,"x²+y²")
+θ+5→θ
+If D
+Then
+If D>0:Then:Output(4,θ,"+"):θ+1→θ:End
+If D<0:Then:Output(4,θ,"-"):θ+1→θ:End
+If abs(D)≠1:Then:Output(4,θ,abs(D)):θ+(1+(abs(D)<0)+int(log(abs(abs(D))+not(abs(D)))))→θ:End
+Output(4,θ,"x"):θ+1→θ
+End
+If E
+Then
+If E>0:Then:Output(4,θ,"+"):θ+1→θ:End
+If E<0:Then:Output(4,θ,"-"):θ+1→θ:End
+If abs(E)≠1:Then:Output(4,θ,abs(E)):θ+(1+(abs(E)<0)+int(log(abs(abs(E))+not(abs(E)))))→θ:End
+Output(4,θ,"y"):θ+1→θ
+End
+1→θ
+Output(5,θ,"=")
+θ+1→θ
+Output(5,θ,G)
+θ+(1+(G<0)+int(log(abs(G)+not(G))))→θ
+End
+Input "answer=",G
+T+1→T
+abs(G-X)<.000001→V
+ClrHome
+If V
+Then
+L+1→L
+Disp "CORRECT!"
+Else
+Disp "NOT QUITE.","ANSWER:"
+Disp X►Frac
+End
+Output(5,1,"SCORE:")
+Output(5,8,L)
+Output(5,8+(1+(L<0)+int(log(abs(L)+not(L)))),"/")
+Output(5,9+(1+(L<0)+int(log(abs(L)+not(L)))),T)
+Output(7,1,"ENTER: next")
+Output(8,1,"CLEAR: finish")
+0→K
+Repeat K=45 or K=105
+getKey→K
+End
+If K=105
+Goto BJ
+Goto BK
+Lbl A9
+0→L
+0→T
+0→P
+Lbl BL
+Repeat Q≠P
+randInt(1,18)→Q
+End
+Q→P
+ClrHome
+If Q=1
+Then
+Output(1,1,"The list of")
+Output(2,1,"items ___ on")
+Output(3,1,"the table.")
+Output(5,1,"1 have been")
+Output(6,1,"2 are")
+Output(7,1,"3 is")
+Output(8,1,"4 were")
+3→X
+End
+If Q=2
+Then
+Output(1,1,"She studied all")
+Output(2,1,"night___ she")
+Output(3,1,"aced the test.")
+Output(5,1,"1 , then")
+Output(6,1,"2 , (comma)")
+Output(7,1,"3 (nothing)")
+Output(8,1,"4 ; (semicolon)")
+4→X
+End
+If Q=3
+Then
+Output(1,1,"The company")
+Output(2,1,"said that ___")
+Output(3,1,"profits rose.")
+Output(5,1,"1 its")
+Output(6,1,"2 it's")
+Output(7,1,"3 they're")
+Output(8,1,"4 their")
+1→X
+End
+If Q=4
+Then
+Output(1,1,"The plan was")
+Output(2,1,"cheap. ___, it")
+Output(3,1,"failed fast.")
+Output(5,1,"1 Therefore")
+Output(6,1,"2 However")
+Output(7,1,"3 For example")
+Output(8,1,"4 Similarly")
+2→X
+End
+If Q=5
+Then
+Output(1,1,"It rained all")
+Output(2,1,"day. ___, the")
+Output(3,1,"game was")
+Output(4,1,"canceled.")
+Output(5,1,"1 As a result")
+Output(6,1,"2 However")
+Output(7,1,"3 Meanwhile")
+Output(8,1,"4 Likewise")
+1→X
+End
+If Q=6
+Then
+Output(1,1,"Running late,")
+Output(2,1,"___ missed the")
+Output(3,1,"bus.")
+Output(5,1,"1 Sam")
+Output(6,1,"2 the bus")
+Output(7,1,"3 Sam's bike")
+Output(8,1,"4 it")
+1→X
+End
+If Q=7
+Then
+Output(1,1,"She had one")
+Output(2,1,"goal___ to win")
+Output(3,1,"the title.")
+Output(5,1,"1 (nothing)")
+Output(6,1,"2 , and")
+Output(7,1,"3 : (colon)")
+Output(8,1,"4 ; (semicolon)")
+3→X
+End
+If Q=8
+Then
+Output(1,1,"Both ___")
+Output(2,1,"jackets were")
+Output(3,1,"left at school.")
+Output(5,1,"1 girl's")
+Output(6,1,"2 girls's")
+Output(7,1,"3 girls")
+Output(8,1,"4 girls'")
+4→X
+End
+If Q=9
+Then
+Output(1,1,"In 1969, Apollo")
+Output(2,1,"11 ___ on the")
+Output(3,1,"Moon.")
+Output(5,1,"1 will land")
+Output(6,1,"2 has landed")
+Output(7,1,"3 landed")
+Output(8,1,"4 lands")
+3→X
+End
+If Q=10
+Then
+Output(1,1,"He likes to")
+Output(2,1,"hike, swim,")
+Output(3,1,"and ___.")
+Output(5,1,"1 biking")
+Output(6,1,"2 bike")
+Output(7,1,"3 bikes")
+Output(8,1,"4 to biking")
+2→X
+End
+If Q=11
+Then
+Output(1,1,"Neither the")
+Output(2,1,"coach nor the")
+Output(3,1,"players ___")
+Output(4,1,"ready.")
+Output(5,1,"1 was")
+Output(6,1,"2 is")
+Output(7,1,"3 has been")
+Output(8,1,"4 were")
+4→X
+End
+If Q=12
+Then
+Output(1,1,"To ___ should I")
+Output(2,1,"give this?")
+Output(5,1,"1 who's")
+Output(6,1,"2 who")
+Output(7,1,"3 whom")
+Output(8,1,"4 whose")
+3→X
+End
+If Q=13
+Then
+Output(1,1,"I was tired___")
+Output(2,1,"I kept working.")
+Output(5,1,"1 (nothing)")
+Output(6,1,"2 , however,")
+Output(7,1,"3 , (comma)")
+Output(8,1,"4 , but")
+4→X
+End
+If Q=14
+Then
+Output(1,1,"The effects of")
+Output(2,1,"the new drug")
+Output(3,1,"___ unknown.")
+Output(5,1,"1 remains")
+Output(6,1,"2 has been")
+Output(7,1,"3 is")
+Output(8,1,"4 remain")
+4→X
+End
+If Q=15
+Then
+Output(1,1,"Some birds")
+Output(2,1,"can't fly. ___,")
+Output(3,1,"penguins swim")
+Output(4,1,"instead.")
+Output(5,1,"1 However")
+Output(6,1,"2 For example")
+Output(7,1,"3 Therefore")
+Output(8,1,"4 Meanwhile")
+2→X
+End
+If Q=16
+Then
+Output(1,1,"The meeting")
+Output(2,1,"___ at noon.")
+Output(5,1,"1 ended")
+Output(6,1,"2 had an ending")
+Output(7,1,"3 ended and quit")
+Output(8,1,"4 came to an end")
+1→X
+End
+If Q=17
+Then
+Output(1,1,"Located in Peru")
+Output(2,1,"___ draws many")
+Output(3,1,"tourists.")
+Output(5,1,"1 , tourists see")
+Output(6,1,"2 , people visit")
+Output(7,1,"3 , its fame")
+Output(8,1,"4 , Machu Picchu")
+4→X
+End
+If Q=18
+Then
+Output(1,1,"My cat, who is")
+Output(2,1,"10___ loves")
+Output(3,1,"naps.")
+Output(5,1,"1 (nothing)")
+Output(6,1,"2 -- (dash)")
+Output(7,1,"3 , (comma)")
+Output(8,1,"4 ; (semicolon)")
+3→X
+End
+0→K
+Repeat max(K={92,93,94,82,45})
+getKey→K
+End
+If K=45
+Goto BK
+(K=92)+2(K=93)+3(K=94)+4(K=82)→G
+T+1→T
+ClrHome
+If G=X
+Then
+L+1→L
+Output(1,1,"CORRECT!")
+Else
+Output(1,1,"NO. ANSWER: ")
+Output(1,13,X)
+End
+If Q=1
+Then
+Output(3,1,"Subject: list")
+Output(4,1,"(singular). Skip")
+Output(5,1,"the 'of' phrase.")
+End
+If Q=2
+Then
+Output(3,1,"Two full")
+Output(4,1,"sentences need")
+Output(5,1,"; or a period.")
+Output(6,1,"Comma = splice.")
+End
+If Q=3
+Then
+Output(3,1,"A company is")
+Output(4,1,"one thing: its.")
+Output(5,1,"it's = it is")
+End
+If Q=4
+Then
+Output(3,1,"Cheap (good) vs")
+Output(4,1,"failed (bad):")
+Output(5,1,"contrast word.")
+End
+If Q=5
+Then
+Output(3,1,"The rain CAUSED")
+Output(4,1,"the cancel:")
+Output(5,1,"cause->effect.")
+End
+If Q=6
+Then
+Output(3,1,"Who was running")
+Output(4,1,"late? Sam must")
+Output(5,1,"come right after")
+Output(6,1,"the comma.")
+End
+If Q=7
+Then
+Output(3,1,"Full sentence +")
+Output(4,1,"explanation")
+Output(5,1,"= colon.")
+End
+If Q=8
+Then
+Output(3,1,"2+ girls own")
+Output(4,1,"them: plural")
+Output(5,1,"possessive s'.")
+End
+If Q=9
+Then
+Output(3,1,"1969 = a done")
+Output(4,1,"past event:")
+Output(5,1,"simple past.")
+End
+If Q=10
+Then
+Output(3,1,"Parallel: to")
+Output(4,1,"hike, swim, and")
+Output(5,1,"bike.")
+End
+If Q=11
+Then
+Output(3,1,"With or/nor the")
+Output(4,1,"verb matches the")
+Output(5,1,"nearer noun:")
+Output(6,1,"players.")
+End
+If Q=12
+Then
+Output(3,1,"Object of 'to':")
+Output(4,1,"to him -> whom")
+Output(5,1,"(he -> who)")
+End
+If Q=13
+Then
+Output(3,1,"A FANBOYS word")
+Output(4,1,"after a comma")
+Output(5,1,"joins 2 full")
+Output(6,1,"sentences.")
+End
+If Q=14
+Then
+Output(3,1,"Subject is")
+Output(4,1,"effects (plural)")
+Output(5,1,"not drug.")
+End
+If Q=15
+Then
+Output(3,1,"Penguins are an")
+Output(4,1,"EXAMPLE of birds")
+Output(5,1,"that can't fly.")
+End
+If Q=16
+Then
+Output(3,1,"All say the")
+Output(4,1,"same thing: the")
+Output(5,1,"shortest clear")
+Output(6,1,"choice wins.")
+End
+If Q=17
+Then
+Output(3,1,"Located in Peru")
+Output(4,1,"must describe")
+Output(5,1,"the noun right")
+Output(6,1,"after it.")
+End
+If Q=18
+Then
+Output(3,1,"Extra info opens")
+Output(4,1,"with a comma, so")
+Output(5,1,"it must close")
+Output(6,1,"with a comma.")
+End
+Output(7,1,"SCORE:")
+Output(7,8,L)
+Output(7,8+(1+(L<0)+int(log(abs(L)+not(L)))),"/")
+Output(7,9+(1+(L<0)+int(log(abs(L)+not(L)))),T)
+Output(8,1,"ENTER:next CLR:x")
+0→K
+Repeat K=45 or K=105
+getKey→K
+End
+If K=105
+Goto BL
+Goto BK
+Lbl BK
+ClrHome
+Output(2,1,"FINAL SCORE")
+Output(4,1,L)
+Output(4,1+(1+(L<0)+int(log(abs(L)+not(L)))),"/")
+Output(4,2+(1+(L<0)+int(log(abs(L)+not(L)))),T)
+If T
+Then
+round(100L/T,0)→V
+Output(5,1,V)
+Output(5,1+(1+(V<0)+int(log(abs(V)+not(V)))),"%")
+End
+Output(7,1,"Keep practicing!")
+Pause
+Goto A3
+Lbl A6
+DelVar L₆
+ClrHome
+Output(3,3,"Good luck on")
+Output(4,3,"the SAT!")

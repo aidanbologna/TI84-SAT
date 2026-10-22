@@ -1,0 +1,842 @@
+ClrHome
+Output(1,1,"+--------------+")
+Output(2,1,"|  SAT TOOLKIT |")
+Output(3,1,"|  READ+WRITE  |")
+Output(4,1,"| DIGITAL  SAT |")
+Output(5,1,"+--------------+")
+Output(7,3,"PRESS ENTER")
+Pause
+Lbl A5
+Menu("SAT READ+WRITE","R&W GUIDE",A0,"GRAMMAR QUIZ",A1,"TEST STRATEGY",A2,"HOW TO USE",A3,"QUIT",A4)
+Lbl A1
+Menu("GRAMMAR QUIZ","START QUIZ",A6,"MAIN MENU",A5)
+Lbl A0
+Menu("READING+WRITING","PUNCTUATION",BC,"GRAMMAR",BD,"TRANSITIONS",BE,"NOTES QS",BF,"READING QS",BG,"R&W STRATEGY",BH,"MAIN MENU",A5)
+Lbl BC
+1→P
+Repeat K=45 or P>7
+ClrHome
+Output(1,1,"PUNCTUATION")
+Output(1,14,P)
+Output(1,15,"/7")
+Output(8,1,"<- -> CLEAR:MENU")
+If P=1
+Then
+Output(2,1,"IC=INDEPENDENT")
+Output(3,2,"CLAUSE (COULD")
+Output(4,2,"BE A SENTENCE)")
+Output(5,1,"IC; IC   OK")
+Output(6,1,"IC, IC   WRONG")
+Output(7,2,"(COMMA SPLICE)")
+End
+If P=2
+Then
+Output(2,1,"FIX A SPLICE:")
+Output(3,1,"IC. IC / IC; IC")
+Output(4,1,"IC, FANBOYS IC")
+Output(5,1,"FANBOYS =")
+Output(6,1,"FOR,AND,NOR,BUT,")
+Output(7,1,"OR,YET,SO")
+End
+If P=3
+Then
+Output(2,1,"COLON :")
+Output(3,1,"IC: LIST/EXPLAIN")
+Output(4,1,"BEFORE THE COLON")
+Output(5,2,"= A FULL IC!")
+Output(6,1,"I HAD ONE GOAL:")
+Output(7,2,"TO WIN.")
+End
+If P=4
+Then
+Output(2,1,"DASH --")
+Output(3,1,"ACTS AS A COLON")
+Output(4,2,"OR LIKE A PAIR")
+Output(5,2,"OF COMMAS")
+Output(6,1,"MATCH THE PAIR:")
+Output(7,1,",X,  -X-  (X)")
+End
+If P=5
+Then
+Output(2,1,"COMMAS: USE FOR")
+Output(3,1,"-INTRO PHRASES,")
+Output(4,1,"-EXTRA INFO, IN")
+Output(5,2,"A MATCHED PAIR,")
+Output(6,1,"-LISTS: A, B, C")
+Output(7,1,"-IC, FANBOYS IC")
+End
+If P=6
+Then
+Output(2,1,"NO COMMA BETWEEN")
+Output(3,1,"-SUBJECT & VERB")
+Output(4,1,"-VERB & OBJECT")
+Output(5,1,"-BEFORE 'THAT'")
+Output(6,1,"-ESSENTIAL INFO")
+Output(7,1,"DOUBT? CUT IT.")
+End
+If P=7
+Then
+Output(2,1,"APOSTROPHES '")
+Output(3,1,"DOG'S = 1 DOG")
+Output(4,1,"DOGS' = 2+ DOGS")
+Output(5,1,"ITS = POSSESSIVE")
+Output(6,1,"IT'S = IT IS")
+Output(7,1,"WHOSE VS WHO'S")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A0
+Lbl BD
+1→P
+Repeat K=45 or P>8
+ClrHome
+Output(1,1,"GRAMMAR")
+Output(1,14,P)
+Output(1,15,"/8")
+Output(8,1,"<- -> CLEAR:MENU")
+If P=1
+Then
+Output(2,1,"SUBJECT-VERB")
+Output(3,1,"CROSS OUT 'OF'")
+Output(4,2,"PHRASES:")
+Output(5,1,"THE BOX OF TOYS")
+Output(6,2,"IS HEAVY.")
+Output(7,1,"EACH/EVERY = 1")
+End
+If P=2
+Then
+Output(2,1,"TRICKY SINGULAR:")
+Output(3,1,"EACH, EVERYONE,")
+Output(4,1,"TEAM, GROUP,")
+Output(5,1,"EITHER, NEITHER")
+Output(6,1,"THERE IS A CAT")
+Output(7,1,"THERE ARE CATS")
+End
+If P=3
+Then
+Output(2,1,"OR/NOR: VERB")
+Output(3,2,"MATCHES THE")
+Output(4,2,"NEARER NOUN:")
+Output(5,1,"NEITHER HE NOR")
+Output(6,2,"THEY ARE READY")
+End
+If P=4
+Then
+Output(2,1,"PRONOUNS MATCH")
+Output(3,2,"THEIR NOUN:")
+Output(4,1,"COMPANY -> ITS")
+Output(5,1,"PARENTS -> THEIR")
+Output(6,1,"WHO = PEOPLE")
+Output(7,1,"WHICH = THINGS")
+End
+If P=5
+Then
+Output(2,1,"WHO = HE (SUBJ)")
+Output(3,1,"WHOM = HIM (OBJ)")
+Output(4,1,"I VS ME: DROP")
+Output(5,2,"THE OTHER NOUN")
+Output(6,1,"ME AND AL WENT X")
+Output(7,1,"AL AND I WENT OK")
+End
+If P=6
+Then
+Output(2,1,"VERB TENSE:")
+Output(3,1,"MATCH NEARBY")
+Output(4,2,"VERBS & DATES")
+Output(5,1,"IN 1990 -> PAST")
+Output(6,1,"HAD + VERB =")
+Output(7,2,"EARLIER PAST")
+End
+If P=7
+Then
+Output(2,1,"MODIFIERS:")
+Output(3,1,"WALKING HOME,")
+Output(4,2,"SHE SAW A DOG.")
+Output(5,1,"NOUN AFTER THE")
+Output(6,2,"COMMA DOES THE")
+Output(7,2,"INTRO ACTION!")
+End
+If P=8
+Then
+Output(2,1,"PARALLEL LISTS:")
+Output(3,1,"TO RUN, SWIM,")
+Output(4,2,"AND BIKE  OK")
+Output(5,1,"RUNNING, SWIM,")
+Output(6,2,"TO BIKE  WRONG")
+Output(7,1,"CONCISE WINS!")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A0
+Lbl BE
+1→P
+Repeat K=45 or P>6
+ClrHome
+Output(1,1,"TRANSITIONS")
+Output(1,14,P)
+Output(1,15,"/6")
+Output(8,1,"<- -> CLEAR:MENU")
+If P=1
+Then
+Output(2,1,"READ SENTENCE")
+Output(3,2,"BEFORE & AFTER")
+Output(4,1,"NAME THE LINK:")
+Output(5,1,"CONTRAST? CAUSE?")
+Output(6,2,"EXAMPLE? MORE?")
+Output(7,1,"THEN PICK WORD.")
+End
+If P=2
+Then
+Output(2,1,"CONTRAST:")
+Output(3,1,"HOWEVER, BUT")
+Output(4,1,"NEVERTHELESS,")
+Output(5,1,"IN CONTRAST,")
+Output(6,1,"CONVERSELY,")
+Output(7,1,"STILL, YET")
+End
+If P=3
+Then
+Output(2,1,"ADD / SAME WAY:")
+Output(3,1,"FURTHERMORE,")
+Output(4,1,"MOREOVER,")
+Output(5,1,"ADDITIONALLY,")
+Output(6,1,"SIMILARLY,")
+Output(7,1,"LIKEWISE,")
+End
+If P=4
+Then
+Output(2,1,"CAUSE->EFFECT:")
+Output(3,1,"THEREFORE,")
+Output(4,1,"THUS, HENCE,")
+Output(5,1,"CONSEQUENTLY,")
+Output(6,1,"AS A RESULT,")
+Output(7,1,"ACCORDINGLY,")
+End
+If P=5
+Then
+Output(2,1,"EXAMPLE:")
+Output(3,1,"FOR EXAMPLE,")
+Output(4,1,"FOR INSTANCE,")
+Output(5,1,"CLARIFY:")
+Output(6,1,"IN OTHER WORDS,")
+Output(7,1,"THAT IS,")
+End
+If P=6
+Then
+Output(2,1,"TIME / ORDER:")
+Output(3,1,"SUBSEQUENTLY,")
+Output(4,1,"MEANWHILE, THEN")
+Output(5,1,"CONCLUDE:")
+Output(6,1,"IN SUM, OVERALL")
+Output(7,1,"ULTIMATELY,")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A0
+Lbl BF
+1→P
+Repeat K=45 or P>3
+ClrHome
+Output(1,1,"NOTES QS")
+Output(1,14,P)
+Output(1,15,"/3")
+Output(8,1,"<- -> CLEAR:MENU")
+If P=1
+Then
+Output(2,1,"STUDENT NOTES QS")
+Output(3,1,"1. READ THE GOAL")
+Output(4,2,"IN THE QUESTION")
+Output(5,1,"2. PICK CHOICE")
+Output(6,2,"THAT DOES ONLY")
+Output(7,2,"THAT GOAL")
+End
+If P=2
+Then
+Output(2,1,"GOAL KEYWORDS:")
+Output(3,1,"COMPARE->2 ITEMS")
+Output(4,1,"CONTRAST->DIFFS")
+Output(5,1,"EMPHASIZE->FOCUS")
+Output(6,1,"UNFAMILIAR AUD.")
+Output(7,1,"->EXPLAIN/DEFINE")
+End
+If P=3
+Then
+Output(2,1,"WRONG ANSWERS:")
+Output(3,1,"-TRUE BUT OFF-")
+Output(4,2,"GOAL")
+Output(5,1,"-ONLY HALF OF")
+Output(6,2,"THE GOAL")
+Output(7,1,"-EXTRA DETAILS")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A0
+Lbl BG
+1→P
+Repeat K=45 or P>6
+ClrHome
+Output(1,1,"READING QS")
+Output(1,14,P)
+Output(1,15,"/6")
+Output(8,1,"<- -> CLEAR:MENU")
+If P=1
+Then
+Output(2,1,"WORDS IN CONTEXT")
+Output(3,1,"COVER CHOICES.")
+Output(4,1,"PREDICT YOUR OWN")
+Output(5,2,"WORD FROM CLUES")
+Output(6,1,"MATCH PREDICTION")
+End
+If P=2
+Then
+Output(2,1,"MAIN PURPOSE:")
+Output(3,1,"WHOLE TEXT, NOT")
+Output(4,2,"ONE DETAIL")
+Output(5,1,"VERBS: ARGUE,")
+Output(6,2,"DESCRIBE, SHOW,")
+Output(7,2,"CHALLENGE...")
+End
+If P=3
+Then
+Output(2,1,"EVIDENCE QS:")
+Output(3,1,"FIND THE CLAIM")
+Output(4,1,"CHOICE MUST")
+Output(5,1,"DIRECTLY BACK IT")
+Output(6,1,"DATA QS: READ")
+Output(7,2,"THE LABELS!")
+End
+If P=4
+Then
+Output(2,1,"INFERENCE:")
+Output(3,1,"MOST LOGICAL")
+Output(4,2,"COMPLETION")
+Output(5,1,"MUST BE PROVEN")
+Output(6,2,"BY THE TEXT")
+Output(7,1,"AVOID EXTREMES")
+End
+If P=5
+Then
+Output(2,1,"CROSS-TEXT:")
+Output(3,1,"TEXT 1 VS TEXT 2")
+Output(4,1,"HOW WOULD THE")
+Output(5,2,"AUTHOR OF 2")
+Output(6,2,"RESPOND TO 1?")
+Output(7,1,"AGREE/DISAGREE?")
+End
+If P=6
+Then
+Output(2,1,"TEXT STRUCTURE:")
+Output(3,1,"LABEL EACH LINE:")
+Output(4,2,"CLAIM/EVIDENCE/")
+Output(5,2,"COUNTER/EXAMPLE")
+Output(6,1,"PURPOSE OF A")
+Output(7,2,"LINE = ITS JOB")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A0
+Lbl BH
+1→P
+Repeat K=45 or P>3
+ClrHome
+Output(1,1,"R&W STRATEGY")
+Output(1,14,P)
+Output(1,15,"/3")
+Output(8,1,"<- -> CLEAR:MENU")
+If P=1
+Then
+Output(2,1,"MODULE: 27 QS")
+Output(3,2,"IN 32 MINUTES")
+Output(4,1,"~70 SEC PER Q")
+Output(5,1,"NO PENALTY FOR")
+Output(6,2,"GUESSING, SO")
+Output(7,2,"ANSWER EVERY Q")
+End
+If P=2
+Then
+Output(2,1,"GRAMMAR QS:")
+Output(3,1,"WHAT DIFFERS IN")
+Output(4,2,"THE CHOICES?")
+Output(5,1,"THAT IS THE")
+Output(6,2,"RULE BEING")
+Output(7,2,"TESTED.")
+End
+If P=3
+Then
+Output(2,1,"STUCK? USE")
+Output(3,1,"MARK FOR REVIEW")
+Output(4,2,"AND COME BACK")
+Output(5,1,"ELIMINATION:")
+Output(6,1,"WRONG IF ANY")
+Output(7,2,"PART IS WRONG")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A0
+Lbl A2
+1→P
+Repeat K=45 or P>5
+ClrHome
+Output(1,1,"STRATEGY")
+Output(1,14,P)
+Output(1,15,"/5")
+Output(8,1,"<- -> CLEAR:MENU")
+If P=1
+Then
+Output(2,1,"DIGITAL SAT")
+Output(3,1,"R&W: 2X32 MIN")
+Output(4,2,"54 QUESTIONS")
+Output(5,1,"MATH: 2X35 MIN")
+Output(6,2,"44 QUESTIONS")
+Output(7,1,"SCORE 400-1600")
+End
+If P=2
+Then
+Output(2,1,"ADAPTIVE:")
+Output(3,1,"MODULE 2 GETS")
+Output(4,2,"HARDER IF M1")
+Output(5,2,"GOES WELL.")
+Output(6,1,"ACCURACY IN M1")
+Output(7,2,"MATTERS MOST!")
+End
+If P=3
+Then
+Output(2,1,"MATH:")
+Output(3,1,"~95 SEC PER Q")
+Output(4,1,"CALC OK ON ALL")
+Output(5,2,"OF MATH")
+Output(6,1,"PLUG IN ANSWERS")
+Output(7,2,"OR PICK NUMBERS")
+End
+If P=4
+Then
+Output(2,1,"TYPED ANSWERS:")
+Output(3,1,"NEGATIVE OK")
+Output(4,1,"FRACTIONS OK")
+Output(5,1,"5 CHARS (+)")
+Output(6,1,"6 CHARS (-)")
+Output(7,1,"NO MIXED #S")
+End
+If P=5
+Then
+Output(2,1,"TEST DAY:")
+Output(3,1,"FRESH BATTERIES!")
+Output(4,1,"BRING A BACKUP")
+Output(5,1,"SLEEP > CRAMMING")
+Output(6,1,"ARRIVE EARLY")
+Output(7,1,"YOU'VE GOT THIS!")
+End
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A5
+Lbl A3
+1→P
+Repeat K=45 or P>1
+ClrHome
+Output(1,1,"HOW TO USE")
+Output(8,1,"ENTER: BACK")
+Output(2,1,"MENUS: PRESS #")
+Output(3,1,"PAGES: < > KEYS")
+Output(4,2,"OR ENTER")
+Output(5,1,"CLEAR: GO BACK")
+Output(6,1,"FROZEN? ON KEY")
+Output(7,1,"USES A-Z,θ,L6")
+Repeat K
+getKey→K
+End
+P+(K=26 or K=34 or K=105)-(P>1)(K=24 or K=25)→P
+End
+Goto A5
+Lbl A6
+0→L
+0→T
+0→P
+Lbl BL
+Repeat Q≠P
+randInt(1,18)→Q
+End
+Q→P
+ClrHome
+If Q=1
+Then
+Output(1,1,"THE LIST OF")
+Output(2,1,"ITEMS ___ ON")
+Output(3,1,"THE TABLE.")
+Output(5,1,"1 HAVE BEEN")
+Output(6,1,"2 ARE")
+Output(7,1,"3 IS")
+Output(8,1,"4 WERE")
+3→X
+End
+If Q=2
+Then
+Output(1,1,"SHE STUDIED ALL")
+Output(2,1,"NIGHT___ SHE")
+Output(3,1,"ACED THE TEST.")
+Output(5,1,"1 , THEN")
+Output(6,1,"2 , (COMMA)")
+Output(7,1,"3 (NOTHING)")
+Output(8,1,"4 ; (SEMICOLON)")
+4→X
+End
+If Q=3
+Then
+Output(1,1,"THE COMPANY")
+Output(2,1,"SAID THAT ___")
+Output(3,1,"PROFITS ROSE.")
+Output(5,1,"1 ITS")
+Output(6,1,"2 IT'S")
+Output(7,1,"3 THEY'RE")
+Output(8,1,"4 THEIR")
+1→X
+End
+If Q=4
+Then
+Output(1,1,"THE PLAN WAS")
+Output(2,1,"CHEAP. ___, IT")
+Output(3,1,"FAILED FAST.")
+Output(5,1,"1 THEREFORE")
+Output(6,1,"2 HOWEVER")
+Output(7,1,"3 FOR EXAMPLE")
+Output(8,1,"4 SIMILARLY")
+2→X
+End
+If Q=5
+Then
+Output(1,1,"IT RAINED ALL")
+Output(2,1,"DAY. ___, THE")
+Output(3,1,"GAME WAS")
+Output(4,1,"CANCELED.")
+Output(5,1,"1 AS A RESULT")
+Output(6,1,"2 HOWEVER")
+Output(7,1,"3 MEANWHILE")
+Output(8,1,"4 LIKEWISE")
+1→X
+End
+If Q=6
+Then
+Output(1,1,"RUNNING LATE,")
+Output(2,1,"___ MISSED THE")
+Output(3,1,"BUS.")
+Output(5,1,"1 SAM")
+Output(6,1,"2 THE BUS")
+Output(7,1,"3 SAM'S BIKE")
+Output(8,1,"4 IT")
+1→X
+End
+If Q=7
+Then
+Output(1,1,"SHE HAD ONE")
+Output(2,1,"GOAL___ TO WIN")
+Output(3,1,"THE TITLE.")
+Output(5,1,"1 (NOTHING)")
+Output(6,1,"2 , AND")
+Output(7,1,"3 : (COLON)")
+Output(8,1,"4 ; (SEMICOLON)")
+3→X
+End
+If Q=8
+Then
+Output(1,1,"BOTH ___")
+Output(2,1,"JACKETS WERE")
+Output(3,1,"LEFT AT SCHOOL.")
+Output(5,1,"1 GIRL'S")
+Output(6,1,"2 GIRLS'S")
+Output(7,1,"3 GIRLS")
+Output(8,1,"4 GIRLS'")
+4→X
+End
+If Q=9
+Then
+Output(1,1,"IN 1969, APOLLO")
+Output(2,1,"11 ___ ON THE")
+Output(3,1,"MOON.")
+Output(5,1,"1 WILL LAND")
+Output(6,1,"2 HAS LANDED")
+Output(7,1,"3 LANDED")
+Output(8,1,"4 LANDS")
+3→X
+End
+If Q=10
+Then
+Output(1,1,"HE LIKES TO")
+Output(2,1,"HIKE, SWIM,")
+Output(3,1,"AND ___.")
+Output(5,1,"1 BIKING")
+Output(6,1,"2 BIKE")
+Output(7,1,"3 BIKES")
+Output(8,1,"4 TO BIKING")
+2→X
+End
+If Q=11
+Then
+Output(1,1,"NEITHER THE")
+Output(2,1,"COACH NOR THE")
+Output(3,1,"PLAYERS ___")
+Output(4,1,"READY.")
+Output(5,1,"1 WAS")
+Output(6,1,"2 IS")
+Output(7,1,"3 HAS BEEN")
+Output(8,1,"4 WERE")
+4→X
+End
+If Q=12
+Then
+Output(1,1,"TO ___ SHOULD I")
+Output(2,1,"GIVE THIS?")
+Output(5,1,"1 WHO'S")
+Output(6,1,"2 WHO")
+Output(7,1,"3 WHOM")
+Output(8,1,"4 WHOSE")
+3→X
+End
+If Q=13
+Then
+Output(1,1,"I WAS TIRED___")
+Output(2,1,"I KEPT WORKING.")
+Output(5,1,"1 (NOTHING)")
+Output(6,1,"2 , HOWEVER,")
+Output(7,1,"3 , (COMMA)")
+Output(8,1,"4 , BUT")
+4→X
+End
+If Q=14
+Then
+Output(1,1,"THE EFFECTS OF")
+Output(2,1,"THE NEW DRUG")
+Output(3,1,"___ UNKNOWN.")
+Output(5,1,"1 REMAINS")
+Output(6,1,"2 HAS BEEN")
+Output(7,1,"3 IS")
+Output(8,1,"4 REMAIN")
+4→X
+End
+If Q=15
+Then
+Output(1,1,"SOME BIRDS")
+Output(2,1,"CAN'T FLY. ___,")
+Output(3,1,"PENGUINS SWIM")
+Output(4,1,"INSTEAD.")
+Output(5,1,"1 HOWEVER")
+Output(6,1,"2 FOR EXAMPLE")
+Output(7,1,"3 THEREFORE")
+Output(8,1,"4 MEANWHILE")
+2→X
+End
+If Q=16
+Then
+Output(1,1,"THE MEETING")
+Output(2,1,"___ AT NOON.")
+Output(5,1,"1 ENDED")
+Output(6,1,"2 HAD AN ENDING")
+Output(7,1,"3 ENDED AND QUIT")
+Output(8,1,"4 CAME TO AN END")
+1→X
+End
+If Q=17
+Then
+Output(1,1,"LOCATED IN PERU")
+Output(2,1,"___ DRAWS MANY")
+Output(3,1,"TOURISTS.")
+Output(5,1,"1 , TOURISTS SEE")
+Output(6,1,"2 , PEOPLE VISIT")
+Output(7,1,"3 , ITS FAME")
+Output(8,1,"4 , MACHU PICCHU")
+4→X
+End
+If Q=18
+Then
+Output(1,1,"MY CAT, WHO IS")
+Output(2,1,"10___ LOVES")
+Output(3,1,"NAPS.")
+Output(5,1,"1 (NOTHING)")
+Output(6,1,"2 -- (DASH)")
+Output(7,1,"3 , (COMMA)")
+Output(8,1,"4 ; (SEMICOLON)")
+3→X
+End
+0→K
+Repeat max(K={92,93,94,82,45})
+getKey→K
+End
+If K=45
+Goto BK
+(K=92)+2(K=93)+3(K=94)+4(K=82)→G
+T+1→T
+ClrHome
+If G=X
+Then
+L+1→L
+Output(1,1,"CORRECT!")
+Else
+Output(1,1,"NO. ANSWER: ")
+Output(1,13,X)
+End
+If Q=1
+Then
+Output(3,1,"SUBJECT: LIST")
+Output(4,1,"(SINGULAR). SKIP")
+Output(5,1,"THE 'OF' PHRASE.")
+End
+If Q=2
+Then
+Output(3,1,"TWO FULL")
+Output(4,1,"SENTENCES NEED")
+Output(5,1,"; OR A PERIOD.")
+Output(6,1,"COMMA = SPLICE.")
+End
+If Q=3
+Then
+Output(3,1,"A COMPANY IS")
+Output(4,1,"ONE THING: ITS.")
+Output(5,1,"IT'S = IT IS")
+End
+If Q=4
+Then
+Output(3,1,"CHEAP (GOOD) VS")
+Output(4,1,"FAILED (BAD):")
+Output(5,1,"CONTRAST WORD.")
+End
+If Q=5
+Then
+Output(3,1,"THE RAIN CAUSED")
+Output(4,1,"THE CANCEL:")
+Output(5,1,"CAUSE->EFFECT.")
+End
+If Q=6
+Then
+Output(3,1,"WHO WAS RUNNING")
+Output(4,1,"LATE? SAM MUST")
+Output(5,1,"COME RIGHT AFTER")
+Output(6,1,"THE COMMA.")
+End
+If Q=7
+Then
+Output(3,1,"FULL SENTENCE +")
+Output(4,1,"EXPLANATION")
+Output(5,1,"= COLON.")
+End
+If Q=8
+Then
+Output(3,1,"2+ GIRLS OWN")
+Output(4,1,"THEM: PLURAL")
+Output(5,1,"POSSESSIVE S'.")
+End
+If Q=9
+Then
+Output(3,1,"1969 = A DONE")
+Output(4,1,"PAST EVENT:")
+Output(5,1,"SIMPLE PAST.")
+End
+If Q=10
+Then
+Output(3,1,"PARALLEL: TO")
+Output(4,1,"HIKE, SWIM, AND")
+Output(5,1,"BIKE.")
+End
+If Q=11
+Then
+Output(3,1,"WITH OR/NOR THE")
+Output(4,1,"VERB MATCHES THE")
+Output(5,1,"NEARER NOUN:")
+Output(6,1,"PLAYERS.")
+End
+If Q=12
+Then
+Output(3,1,"OBJECT OF 'TO':")
+Output(4,1,"TO HIM -> WHOM")
+Output(5,1,"(HE -> WHO)")
+End
+If Q=13
+Then
+Output(3,1,"A FANBOYS WORD")
+Output(4,1,"AFTER A COMMA")
+Output(5,1,"JOINS 2 FULL")
+Output(6,1,"SENTENCES.")
+End
+If Q=14
+Then
+Output(3,1,"SUBJECT IS")
+Output(4,1,"EFFECTS (PLURAL)")
+Output(5,1,"NOT DRUG.")
+End
+If Q=15
+Then
+Output(3,1,"PENGUINS ARE AN")
+Output(4,1,"EXAMPLE OF BIRDS")
+Output(5,1,"THAT CAN'T FLY.")
+End
+If Q=16
+Then
+Output(3,1,"ALL SAY THE")
+Output(4,1,"SAME THING: THE")
+Output(5,1,"SHORTEST CLEAR")
+Output(6,1,"CHOICE WINS.")
+End
+If Q=17
+Then
+Output(3,1,"LOCATED IN PERU")
+Output(4,1,"MUST DESCRIBE")
+Output(5,1,"THE NOUN RIGHT")
+Output(6,1,"AFTER IT.")
+End
+If Q=18
+Then
+Output(3,1,"EXTRA INFO OPENS")
+Output(4,1,"WITH A COMMA, SO")
+Output(5,1,"IT MUST CLOSE")
+Output(6,1,"WITH A COMMA.")
+End
+Output(7,1,"SCORE:")
+Output(7,8,L)
+Output(7,8+(1+(L<0)+int(log(abs(L)+not(L)))),"/")
+Output(7,9+(1+(L<0)+int(log(abs(L)+not(L)))),T)
+Output(8,1,"ENTER:NEXT CLR:X")
+0→K
+Repeat K=45 or K=105
+getKey→K
+End
+If K=105
+Goto BL
+Goto BK
+Lbl BK
+ClrHome
+Output(2,1,"FINAL SCORE")
+Output(4,1,L)
+Output(4,1+(1+(L<0)+int(log(abs(L)+not(L)))),"/")
+Output(4,2+(1+(L<0)+int(log(abs(L)+not(L)))),T)
+If T
+Then
+round(100L/T,0)→V
+Output(5,1,V)
+Output(5,1+(1+(V<0)+int(log(abs(V)+not(V)))),"%")
+End
+Output(7,1,"KEEP PRACTICING!")
+Pause
+Goto A1
+Lbl A4
+DelVar L₆
+ClrHome
+Output(3,3,"GOOD LUCK ON")
+Output(4,3,"THE SAT!")
