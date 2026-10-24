@@ -367,9 +367,9 @@ Disp RT
 Disp "ARC / π"
 Disp RT/π►Frac
 Disp "SECTOR AREA"
-Disp R²T/2
+Disp RRT/2
 Disp "SECTOR AREA / π"
-Disp R²T/(2π)►Frac
+Disp RRT/(2π)►Frac
 Pause
 ClrHome
 Disp "FRACTION OF"

@@ -767,9 +767,9 @@ Disp RT
 Disp "ARC / π"
 Disp RT/π►Frac
 Disp "SECTOR AREA"
-Disp R²T/2
+Disp RRT/2
 Disp "SECTOR AREA / π"
-Disp R²T/(2π)►Frac
+Disp RRT/(2π)►Frac
 Pause
 ClrHome
 Disp "FRACTION OF"
@@ -3079,12 +3079,46 @@ def main() -> None:
     (HERE / "source").mkdir(exist_ok=True)
     (HERE / "source" / f"{PROG_NAME}.txt").write_text(src + "\n", encoding="utf-8")
     data = tokenize(lines)
+    errs = check_tokens(data)
+    if errs:
+        sys.exit("\n".join(errs))
     prog = TIProgram(name=PROG_NAME)
     prog.data = data
     out = HERE / ("TI-84 Plus CE" if PROG_NAME == "SAT" else "TI-84 Plus (older models)")
     out.mkdir(exist_ok=True)
     prog.save(str(out / f"{PROG_NAME}.8xp"), model=TI_84P)
     print(f"{PROG_NAME:8} {len(lines):5} lines {len(data):6} bytes")
+
+
+# Every multi-character token allowed in code (outside strings). Anything else
+# means the tokenizer glued characters into a token we did not intend, like
+# "R²T" becoming the statistics variable R² followed by T.
+CODE_TOKENS = {
+    "►Frac", "round(", "max(", "min(", "median(", "mean(", " or ", " and ", "L₆", "not(", "If ", "Then",
+    "Else", "While ", "Repeat ", "For(", "End", "Lbl ", "Goto ", "Input ", "Disp ", "Output(", "ClrHome",
+    "SortA(", "Menu(", "int(", "abs(", "dim(", "sum(", "fPart(", "gcd(", "randInt(", "sub(", "√(", "log(",
+    "sin(", "sin⁻¹(", "cos(", "cos⁻¹(", "tan(", "tan⁻¹(", "DelVar ", "getKey", "⁻¹", "Pause", "\n",
+}
+
+
+def check_tokens(data: bytes) -> list[str]:
+    from tivars.models import TI_84P
+    from tivars.types import TIProgram
+
+    prog = TIProgram(name="CHECK")
+    prog.data = data
+    errs, in_str, line = [], False, 1
+    for tok in prog.tokens():
+        disp = tok.langs["en"].display
+        if tok.bits == b"\x3f":
+            in_str, line = False, line + 1
+        elif tok.bits == b"\x2a":
+            in_str = not in_str
+        elif tok.bits == b"\x04":
+            in_str = False
+        elif not in_str and len(disp) > 1 and disp not in CODE_TOKENS:
+            errs.append(f"line {line}: unexpected token {disp!r} in code")
+    return errs
 
 
 def select_sections(lines: list[str], keep: set[str]) -> list[str]:
