@@ -3043,6 +3043,9 @@ def tokenize(lines: list[str]) -> bytes:
         for i, part in enumerate(parts):
             if i % 2 == 0:  # code
                 if part:
+                    # the Pause token's name includes its trailing space; without
+                    # it the encoder spells P,a,u,s,e (ERR:SYNTAX on the calculator)
+                    part = re.sub(r"Pause(?! )", "Pause ", part)
                     out += encode(part.replace("π", "pi"), trie=trie, mode="max")[0]
             else:  # string literal
                 j = 0
@@ -3116,8 +3119,12 @@ def check_tokens(data: bytes) -> list[str]:
             in_str = not in_str
         elif tok.bits == b"\x04":
             in_str = False
-        elif not in_str and len(disp) > 1 and disp not in CODE_TOKENS:
+        elif not in_str and len(disp) > 1 and disp.strip() not in CODE_TOKENS and disp not in CODE_TOKENS:
             errs.append(f"line {line}: unexpected token {disp!r} in code")
+        elif not in_str and len(disp) == 1 and "a" <= disp <= "z":
+            # code never uses lowercase letters; one here means a command name
+            # was spelled out letter by letter instead of becoming its token
+            errs.append(f"line {line}: lowercase {disp!r} in code")
     return errs
 
 

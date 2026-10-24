@@ -194,10 +194,10 @@ python build_sat.py
 That regenerates all four programs:
 
 ```
-SAT       3832 lines  56165 bytes
-SATMATH   1332 lines  16974 bytes
-SATTRIG   1813 lines  20935 bytes
-SATRW      842 lines  11822 bytes
+SAT       3832 lines  55797 bytes
+SATMATH   1332 lines  16774 bytes
+SATTRIG   1813 lines  20751 bytes
+SATRW      842 lines  11806 bytes
 ```
 
 The build fails if any line of text is too wide for the 16-character screen, if a label is missing, if a block is unbalanced, or if a `Goto` jumps out of an `If`/loop block. On a real TI, that last one slowly leaks memory until `ERR:MEMORY`. The readable TI-BASIC listings are written to [`source/`](source).
